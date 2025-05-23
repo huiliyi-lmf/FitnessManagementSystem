@@ -9,7 +9,7 @@
 
 #define TABLE_NAME_LEN 36
 #define DATAFILE_NAME "FMSData.bin"
-#define DATAFILE_SIGN "VLSMB_DATAFILE"	// æ–‡ä»¶ç­¾åï¼Œæœ€å¤š15å­—èŠ‚
+#define DATAFILE_SIGN "VLSMB_DATAFILE"	// ÎÄ¼şÇ©Ãû£¬×î´ó15×Ö½Ú
 #define DATATABLE_SIGN "VLSMB_DATATABLE"
 
 #define AdminTable "Admin"
@@ -23,177 +23,178 @@
 
 typedef enum FileStatus {
 	FILE_STATUS_EXIST, FILE_STATUS_DELETE
-}FileStatus;						// æ–‡ä»¶çŠ¶æ€ï¼ˆåˆ é™¤äº†è¿˜æ˜¯æ²¡åˆ é™¤ï¼‰
+}FileStatus;							// ÎÄ¼ş×´Ì¬£¨É¾³ı»òÕßÃ»É¾³ı£©
 
 struct DataTableInfo {
-	unsigned id;				// æ•°æ®è¡¨ID
-	int dataTableHeaderOffset;		// æ•°æ®è¡¨å¤´æ–‡ä»¶åç§»ï¼ˆ-1ä»£è¡¨æ²¡æœ‰ï¼‰
-	char tableName[36];				// æ•°æ®è¡¨åç§°
+	unsigned id;					// Êı¾İ±íID
+	int dataTableHeaderOffset;		// Êı¾İ±íÍ·ÎÄ¼şÆ«ÒÆ£¨-1Ôò´ú±íÃ»ÓĞ£©
+	char tableName[36];				// Êı¾İ±íÃû³Æ
 };
 
 typedef struct DataFileHeader {
-	char signature[16];				// æ–‡ä»¶ç­¾åï¼Œå­—ç¬¦ä¸²ï¼Œ"VLSMB_DATAFILE\0\0"
-	unsigned numbersOfTable;		// å½“å‰è¿™ä¸ªæ–‡ä»¶å¤´å­˜å‚¨çš„æ•°æ®è¡¨ä¿¡æ¯æ•°é‡
-	int nextDataFileHeaderOffset;	// ä¸‹ä¸€ä¸ªæ•°æ®æ–‡ä»¶å¤´éƒ¨å­˜å‚¨çš„æ–‡ä»¶åç§»ï¼ˆ-1ä»£è¡¨æ²¡æœ‰ï¼‰
-	unsigned maxTables;				// å¤´æ–‡ä»¶èƒ½å­˜å‚¨æ•°æ®è¡¨ä¿¡æ¯åº”ä¸º11ä¸ª
-	struct DataTableInfo tables[11];	// æ•°æ®è¡¨ä¿¡æ¯
+	char signature[16];				// ÎÄ¼şÇ©Ãû£¬×Ö·ûÊı×é"VLSMB_DATAFILE\0\0"
+	unsigned numbersOfTable;		// µ±Ç°Êı¾İÎÄ¼şÍ·´æ´¢µÄÊı¾İ±íĞÅÏ¢ÊıÁ¿
+	int nextDataFileHeaderOffset;	// ÏÂÒ»¸öÊı¾İÎÄ¼şÍ·¶¨Òå´æ´¢µÄÎÄ¼şÆ«ÒÆ£¨-1Ôò´ú±íÃ»ÓĞ£©
+	unsigned maxTables;				// Í·ÎÄ¼ş×î¶à´æ´¢Êı¾İ±íĞÅÏ¢£¨Ó¦Îª11£©
+	struct DataTableInfo tables[11];// Êı¾İ±íĞÅÏ¢
 }DataFileHeader;
 
 typedef struct DataTableHeader {
-	char signature[16];				// æ–‡ä»¶ç­¾åï¼Œå­—ç¬¦ä¸²ï¼Œ"VLSMB_DATATABLE\0"
-	unsigned firstDataItemOffset;	// ç¬¬ä¸€ä¸ªæ•°æ®çš„åç§»
+	char signature[16];				// ÎÄ¼şÇ©Ãû£¬×Ö·ûÊı×é"VLSMB_DATATABLE\0"
+	unsigned firstDataItemOffset;	// µÚÒ»¸öÊı¾İµÄÆ«ÒÆ
 }DataTableHeader;
 
-// é”™è¯¯å¤„ç†ä¸å›¾å½¢ç•Œé¢ç›¸å…³å‡½æ•°
+// ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ªÍ¼ĞÎ½çÃæµÄÊä³ö
 
 /**
-* è¾“å‡ºé”™è¯¯ä¿¡æ¯å‡½æ•°
-* @param message é”™è¯¯ä¿¡æ¯
+* ¶¨Òå´íÎóĞÅÏ¢´¦Àí
+* @param message ´íÎóĞÅÏ¢
 */
 void errorInfo(const char* message);
 
 /**
-* è¾“å‡ºé”™è¯¯ä¿¡æ¯å‡½æ•°
-* @param message é”™è¯¯ä¿¡æ¯
-* @param hwnd çª—å£å¥æŸ„
+* ¶¨Òå´íÎóĞÅÏ¢´¦Àí
+* @param message ´íÎóĞÅÏ¢
+* @param hwnd ´°¿Ú¾ä±ú
 */
 void errorInfoForWindow(const char* message, HWND hwnd);
 
 void successInfoForWindow(const char* message, HWND hwnd);
 
 /**
-* è¾“å‡ºè­¦å‘Šä¿¡æ¯å‡½æ•°
-* @param message é”™è¯¯ä¿¡æ¯
+* ¶¨Òå¾¯¸æĞÅÏ¢´¦Àí
+* @param message ¾¯¸æĞÅÏ¢
 */
 void warnInfo(const char* message);
 
 /**
-* è¾“å‡ºè­¦å‘Šä¿¡æ¯å‡½æ•°
-* @param message é”™è¯¯ä¿¡æ¯
-* @param hwnd çª—å£å¥æŸ„
+* ¶¨Òå¾¯¸æĞÅÏ¢´¦Àí
+* @param message ¾¯¸æĞÅÏ¢
+* @param hwnd ´°¿Ú¾ä±ú
 */
 void warnInfoForWindow(const char* message, HWND hwnd);
 
-// è®¾ç½®ç¼–è¾‘æ¡†å¥æŸ„
+// ÉèÖÃ±à¼­¿ò¾ä±ú
 void setEditHandle(HWND hEdit);
 
 void clearEditHandle();
 
 void clearEditText();
 
-// é‡å®šä¹‰printfå’Œputs
+// ÖØÔØprintfºÍputs
 int winPrintf(const char* _format, ...);
 int winPuts(const char* str);
 
 #define printf winPrintf
 #define puts winPuts
 
-// å›¾å½¢ç•Œé¢ç›¸å…³å‡½æ•°ç»“æŸï¼ˆå¸¦å…³è”æ•°æ®ï¼‰
+// Í¼ĞÎ½çÃæµÄÊä³ö¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª
 
 /**
-* åˆå§‹åŒ–æ•°æ®æ–‡ä»¶
-* @return æ˜¯å¦æˆåŠŸ
+* ´´½¨Êı¾İÎÄ¼ş
+* @return ÊÇ·ñ³É¹¦
 */
 bool initDataFile();
 
 /**
-* æ£€æŸ¥æ•°æ®æ–‡ä»¶æ˜¯å¦å­˜åœ¨
-* @return æ˜¯å¦å­˜åœ¨
+* ¼ì²éÊı¾İÎÄ¼şÊÇ·ñÕı³£
+* @return ÊÇ·ñÕı³£
 */
 bool checkDataFileSign();
 
 /**
-* åˆ›å»ºæ–°çš„æ•°æ®è¡¨ä¿¡æ¯
-* @param tableName æ•°æ®è¡¨å
-* @return æ˜¯å¦æˆåŠŸ
+* Ìí¼ÓĞÂµÄÊı¾İ±íĞÅÏ¢
+* @param tableName Êı¾İ±íÃû
+* @return ÊÇ·ñ³É¹¦
 */
 bool createNewTable(char* tableName);
 
 /**
-* åˆ¤æ–­æ•°æ®è¡¨æ˜¯å¦å­˜åœ¨ï¼Œå¹¶è¿”å›DataTableHeaderæ‰€åœ¨çš„æ–‡ä»¶åç§»
-* @param tableName æ•°æ®è¡¨å
-* @return æ–‡ä»¶åç§»ï¼Œä¸º-1ä»£è¡¨ä¸å­˜åœ¨
+* ÅĞ¶ÏÊı¾İ±íÊÇ·ñ´æÔÚ£¬²¢·µ»ØDataTableHeaderËùÔÚµÄÎÄ¼şÆ«ÒÆ
+* @param tableName Êı¾İ±íÃû
+* @return ÎÄ¼şÆ«ÒÆ£¬Îª-1Ôò´ú±í³ö´í
 */
 int getTableHeaderOffset(char* tableName);
 
 /**
- * å‘æŒ‡å®šçš„æ•°æ®è¡¨æ’å…¥ä¸€æ¡æ•°æ®
- * è¿™ä¸ªå‡½æ•°æ˜¯ä¸€ä¸ªç»Ÿä¸€çš„æ¥å£ï¼Œæ— æ³•äº‹å…ˆçŸ¥é“ç»“æ„ä½“ä¿¡æ¯ï¼Œå› æ­¤å°†æ•°æ®çš„å‡½æ•°æŒ‡é’ˆä½œä¸ºå‚æ•°
- * @param tableName æ•°æ®è¡¨å
- * @param data æ•°æ®å­—èŠ‚
- * @param structSize æ•°æ®å¤§å°
- * @param idSetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè®¾ç½®data->id
- * @param offsetSetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè®¾ç½®data->nextOffset
- * @param offsetGetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè·å–data->nexttOffset
- * @param statusSetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè®¾ç½®data->status
- * @return æ˜¯å¦æˆåŠŸ
+ * ÏòÖ¸¶¨µÄÊı¾İ±íÖĞÌí¼ÓÒ»ÌõÊı¾İ
+ * ±¾º¯ÊıÊÇÒ»¸öÍ³Ò»µÄ½Ó¿Ú£¬ÎŞ·¨µÃÖª¾ßÌåµÄ½á¹¹ÌåĞÅÏ¢£¬Òò´Ë½èÖú´«µİµÄº¯ÊıÖ¸Õë½øĞĞ²Ù×÷
+ * @param tableName Êı¾İ±íÃû
+ * @param data Êı¾İ×Ö½Ú
+ * @param structSize Êı¾İ´óĞ¡
+ * @param idSetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇÉèÖÃdata->id
+ * @param offsetSetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇÉèÖÃdata->nextOffset
+ * @param offsetGetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇ»ñµÃdata->nexttOffset
+ * @param statusSetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇÉèÖÃdata->status
+ * @return ÊÇ·ñ³É¹¦
  */
 bool insert(char* tableName, void* data, unsigned structSize, void (*idSetter)(void*, int), void (*offsetSetter)(void*, int), int (*offsetGetter)(void*), void (*statusSetter)(void*, FileStatus));
 
 /**
- * æ ¹æ®IDæŸ¥æ‰¾æ•°æ®åœ¨æ–‡ä»¶ä¸­åç§»ä½ç½®
- * è¿™ä¸ªå‡½æ•°æ˜¯ä¸€ä¸ªç»Ÿä¸€çš„æ¥å£ï¼Œæ— æ³•äº‹å…ˆçŸ¥é“ç»“æ„ä½“ä¿¡æ¯ï¼Œå› æ­¤å°†æ•°æ®çš„å‡½æ•°æŒ‡é’ˆä½œä¸ºå‚æ•°
- * @param tableName æ•°æ®è¡¨å
- * @param id æ•°æ®ID
- * @param structSize æ•°æ®å¤§å°
- * @param offsetSetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè®¾ç½®data->nextOffset
- * @param offsetGetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè·å–data->nextOffset
- * @param idGetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè·å–data->id
- * @return æ–‡ä»¶åç§»ï¼Œè¿”å›-1
+ * ¸ù¾İID»ñµÃÊı¾İÔÚÎÄ¼şµÄÆ«ÒÆÎ»ÖÃ
+ * ±¾º¯ÊıÊÇÒ»¸öÍ³Ò»µÄ½Ó¿Ú£¬ÎŞ·¨µÃÖª¾ßÌåµÄ½á¹¹ÌåĞÅÏ¢£¬Òò´Ë½èÖú´«µİµÄº¯ÊıÖ¸Õë½øĞĞ²Ù×÷
+ * @param tableName Êı¾İ±íÃû
+ * @param id Êı¾İID
+ * @param structSize Êı¾İ´óĞ¡
+ * @param offsetSetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇÉèÖÃdata->nextOffset
+ * @param offsetGetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇ»ñµÃdata->nextOffset
+ * @param idGetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇ»ñµÃdata->id
+ * @return ÎÄ¼şÆ«ÒÆ£¬»òÕß-1
  */
 int getOffsetById(char* tableName, int id, unsigned structSize, void (*offsetSetter)(void*, int), int (*offsetGetter)(void*), int (*idGetter)(void*));
 
 /**
- * æ ¹æ®IDæŸ¥æ‰¾æ•°æ®
- * è¿™ä¸ªå‡½æ•°æ˜¯ä¸€ä¸ªç»Ÿä¸€çš„æ¥å£ï¼Œæ— æ³•äº‹å…ˆçŸ¥é“ç»“æ„ä½“ä¿¡æ¯ï¼Œå› æ­¤å°†æ•°æ®çš„å‡½æ•°æŒ‡é’ˆä½œä¸ºå‚æ•°
- * @param tableName æ•°æ®è¡¨å
- * @param id æ•°æ®ID
- * @param structSize æ•°æ®å¤§å°
- * @param pointerSetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè®¾ç½®data->nextPointer
- * @param getOffsetByIdForTable å‡½æ•°æŒ‡é’ˆï¼Œå€¼ä¸ºgetOffsetByIdå‡½æ•°é’ˆå¯¹è¯¥è¡¨çš„å…·ä½“å®ç°å‡½æ•°
- * @return å­—èŠ‚æ•°ç»„
+ * ¸ù¾İID»ñµÃÊı¾İ
+ * ±¾º¯ÊıÊÇÒ»¸öÍ³Ò»µÄ½Ó¿Ú£¬ÎŞ·¨µÃÖª¾ßÌåµÄ½á¹¹ÌåĞÅÏ¢£¬Òò´Ë½èÖú´«µİµÄº¯ÊıÖ¸Õë½øĞĞ²Ù×÷
+ * @param tableName Êı¾İ±íÃû
+ * @param id Êı¾İID
+ * @param structSize Êı¾İ´óĞ¡
+ * @param pointerSetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇÉèÖÃdata->nextPointer
+ * @param getOffsetByIdForTable º¯ÊıÖ¸Õë£¬ÖµÎªgetOffsetByIdº¯Êı¶ÔÓÚ¸Ã±íµÄ¾ßÌåÊµÏÖº¯Êı
+ * @return ×Ö½ÚÊı¾İ
  */
 void* selectById(char* tableName, int id, unsigned structSize, void (*pointerSetter)(void*, void*), int (*getOffsetByIdForTable)(int));
 
 /**
- * æ ¹æ®IDæ›´æ–°æŸæ¡æ•°æ®è®°å½•
- * è¿™ä¸ªå‡½æ•°æ˜¯ä¸€ä¸ªç»Ÿä¸€çš„æ¥å£ï¼Œæ— æ³•äº‹å…ˆçŸ¥é“ç»“æ„ä½“ä¿¡æ¯ï¼Œå› æ­¤å°†æ•°æ®çš„å‡½æ•°æŒ‡é’ˆä½œä¸ºå‚æ•°
- * @param tableName æ•°æ®è¡¨å
- * @param id æ•°æ®ID
- * @param newData æ–°çš„æ•°æ®å­—èŠ‚
- * @param structSize æ•°æ®å¤§å°
- * @param getOffsetByIdForTable å‡½æ•°æŒ‡é’ˆï¼Œå€¼ä¸ºgetOffsetByIdå‡½æ•°é’ˆå¯¹è¯¥è¡¨çš„å…·ä½“å®ç°å‡½æ•°
- * @param copyProperty å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºå°†å¯æ›´æ–°éƒ¨åˆ†å±æ€§ä»æ–°è®°å½•ä¸Šå¤åˆ¶åˆ°æ—§è®°å½•ä¸Šï¼Œç¬¬ä¸€ä¸ªå‚æ•°ä¸ºç›®æ ‡ï¼Œç¬¬äºŒä¸ªå‚æ•°ä¸ºæº
- * @return æ˜¯å¦æˆåŠŸ
+ * ¸ù¾İID¸üĞÂÄ³¸öÊı¾İ¼ÇÂ¼
+ * ±¾º¯ÊıÊÇÒ»¸öÍ³Ò»µÄ½Ó¿Ú£¬ÎŞ·¨µÃÖª¾ßÌåµÄ½á¹¹ÌåĞÅÏ¢£¬Òò´Ë½èÖú´«µİµÄº¯ÊıÖ¸Õë½øĞĞ²Ù×÷
+ * @param tableName Êı¾İ±íÃû
+ * @param id Êı¾İID
+ * @param newData ĞÂµÄÊı¾İ×Ö½Ú
+ * @param structSize Êı¾İ´óĞ¡
+ * @param getOffsetByIdForTable º¯ÊıÖ¸Õë£¬ÖµÎªgetOffsetByIdº¯Êı¶ÔÓÚ¸Ã±íµÄ¾ßÌåÊµÏÖº¯Êı
+ * @param copyProperty º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıÓÃÓÚ½«ĞÂÊı¾İ¿É¸üĞÂ²¿·Ö×÷ÓÃÓÚ¾É¼ÇÂ¼ÉÏ£¬µÚÒ»¸ö²ÎÊıÎªÄ¿±ê£¬µÚ¶ş¸ö²ÎÊıÎªÔ´
+ * @return ÊÇ·ñ³É¹¦
  */
 bool updateById(char* tableName, int id, void* newData, unsigned structSize, int (*getOffsetByIdForTable)(int), void (*copyProperty)(void*, void*));
 
 /**
- * æ ¹æ®IDåˆ é™¤æŸæ¡æ•°æ®è®°å½•
- * è¿™ä¸ªå‡½æ•°æ˜¯ä¸€ä¸ªç»Ÿä¸€çš„æ¥å£ï¼Œæ— æ³•äº‹å…ˆçŸ¥é“ç»“æ„ä½“ä¿¡æ¯ï¼Œå› æ­¤å°†æ•°æ®çš„å‡½æ•°æŒ‡é’ˆä½œä¸ºå‚æ•°
- * @param tableName æ•°æ®è¡¨å
- * @param id æ•°æ®ID
- * @param structSize æ•°æ®å¤§å°
- * @param getOffsetByIdForTable å‡½æ•°æŒ‡é’ˆï¼Œå€¼ä¸ºgetOffsetByIdå‡½æ•°é’ˆå¯¹è¯¥è¡¨çš„å…·ä½“å®ç°å‡½æ•°
- * @param statusSetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè®¾ç½®data->status
- * @return æ˜¯å¦æˆåŠŸ
+ * ¸ù¾İIDÉ¾³ıÄ³¸öÊı¾İ¼ÇÂ¼
+ * ±¾º¯ÊıÊÇÒ»¸öÍ³Ò»µÄ½Ó¿Ú£¬ÎŞ·¨µÃÖª¾ßÌåµÄ½á¹¹ÌåĞÅÏ¢£¬Òò´Ë½èÖú´«µİµÄº¯ÊıÖ¸Õë½øĞĞ²Ù×÷
+ * @param tableName Êı¾İ±íÃû
+ * @param id Êı¾İID
+ * @param structSize Êı¾İ´óĞ¡
+ * @param getOffsetByIdForTable º¯ÊıÖ¸Õë£¬ÖµÎªgetOffsetByIdº¯Êı¶ÔÓÚ¸Ã±íµÄ¾ßÌåÊµÏÖº¯Êı
+ * @param statusSetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇÉèÖÃdata->status
+ * @return ÊÇ·ñ³É¹¦
  */
 bool deleteById(char* tableName, int id, unsigned structSize, int (*getOffsetByIdForTable)(int), void (*statusSetter)(void*, FileStatus));
 
 /**
- * è·å–ä¸€ä¸ªæ•°æ®è¡¨çš„æ‰€æœ‰è®°å½•ï¼Œä¹Ÿå¯ä»¥è¿‡æ»¤è®°å½•ã€‚
- * è¿™ä¸ªå‡½æ•°æ˜¯ä¸€ä¸ªç»Ÿä¸€çš„æ¥å£ï¼Œæ— æ³•äº‹å…ˆçŸ¥é“ç»“æ„ä½“ä¿¡æ¯ï¼Œå› æ­¤å°†æ•°æ®çš„å‡½æ•°æŒ‡é’ˆä½œä¸ºå‚æ•°
- * @param tableName æ•°æ®è¡¨å
- * @param structSize æ•°æ®å¤§å°
- * @param pointerSetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè®¾ç½®data->nextPointer
- * @param getOffsetByIdForTable å‡½æ•°æŒ‡é’ˆï¼Œå€¼ä¸ºgetOffsetByIdå‡½æ•°é’ˆå¯¹è¯¥è¡¨çš„å…·ä½“å®ç°å‡½æ•°
- * @param pointerGetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè·å–data->nextPointer
- * @param statusGetter å‡½æ•°æŒ‡é’ˆï¼Œè¯¥å‡½æ•°ç”¨äºè·å–data->status
- * @param filter å‡½æ•°æŒ‡é’ˆï¼Œåœ¨è¿”å›é“¾è¡¨æ•°æ®å‰ä¼šå°†é“¾è¡¨æ•°æ®ä¼ å…¥è¿™ä¸ªå‡½æ•°ï¼Œåœ¨æ­¤å‡½æ•°å†…æ ¹æ®æ¡ä»¶è¿”å›è¿‡æ»¤åçš„é“¾è¡¨ï¼Œè¿”å›é“¾è¡¨å¤´èŠ‚ç‚¹ã€‚
- *			filterå‡½æ•°çš„å‚æ•°ä¸ºï¼šç¬¬ä¸€ä¸ªå‚æ•°ä¸ºé“¾è¡¨å¤´èŠ‚ç‚¹ã€‚å…·ä½“ä½¿ç”¨æ–¹æ³•å¯è§struct.cä¸­çš„filterForUserCourseRelByUserIdå‡½æ•°ã€‚
- *			filterå‡½æ•°ä¸ºNULLåˆ™ä¸è¿‡æ»¤ä»»ä½•èŠ‚ç‚¹
- * @return é“¾è¡¨æ•°æ®
+ * »ñÈ¡Ò»¸öÊı¾İ±íµÄËùÓĞ¼ÇÂ¼£¨Ò²¿ÉÒÔ¹ıÂË¼ÇÂ¼£©
+ * ±¾º¯ÊıÊÇÒ»¸öÍ³Ò»µÄ½Ó¿Ú£¬ÎŞ·¨µÃÖª¾ßÌåµÄ½á¹¹ÌåĞÅÏ¢£¬Òò´Ë½èÖú´«µİµÄº¯ÊıÖ¸Õë½øĞĞ²Ù×÷
+ * @param tableName Êı¾İ±íÃû
+ * @param structSize Êı¾İ´óĞ¡
+ * @param pointerSetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇÉèÖÃdata->nextPointer
+ * @param getOffsetByIdForTable º¯ÊıÖ¸Õë£¬ÖµÎªgetOffsetByIdº¯Êı¶ÔÓÚ¸Ã±íµÄ¾ßÌåÊµÏÖº¯Êı
+ * @param pointerGetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇ»ñµÃdata->nextPointer
+ * @param statusGetter º¯ÊıÖ¸Õë£¬¸Ãº¯ÊıµÄ×÷ÓÃÊÇ»ñµÃdata->status
+ * @param filter º¯ÊıÖ¸Õë£¬ÔÚ·µ»ØÊı¾İÁ´±íÇ°»á½«Êı¾İÁ´±í´«µİµ½Õâ¸öº¯ÊıÀï£¬¿ÉÒÔÔÚ´Ëº¯ÊıÄÚ¸ù¾İÌõ¼şÖØ¹¹Á´±í£¬²¢·µ»ØĞÂÁ´±íÍ·½Úµã¡£
+ *			filterº¯ÊıµÄ²ÎÊıÎªµÚÒ»¸ö²ÎÊıÎªÁ´±íÍ·½Úµã¡£¾ßÌåÊ¹ÓÃ·½·¨¿ÉÒÔ¼ûstruct.c¶¨Òå¸öfilterForUserCourseRelByUserIdº¯Êı¡£
+ *			filter¿ÉÒÔÎªNULL£¬Ôò²»¹ıÂËÈÎºÎ½Úµã
+ * @return Êı¾İÁ´±í
  */
 void* selectAll(char* tableName, unsigned structSize, void (*pointerSetter)(void*, void*), int (*getOffsetByIdForTable)(int), void* (*pointerGetter)(void*), FileStatus(*statusGetter)(void*), void* (*filter)(void*));
 
 #endif 
+

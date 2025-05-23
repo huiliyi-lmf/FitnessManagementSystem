@@ -13,7 +13,7 @@
 #define COACHWINDOW_CLASS_NAME "VLSMB_FMS_COACH"
 #define USERWINDOW_CLASS_NAME  "VLSMB_FMS_USER"
 
-// 注册控件标识
+// ע�����ؼ����
 #define IDC_EDIT_USERNAME 0x1001
 #define IDC_EDIT_PASSWORD 0x1002
 #define IDC_BTN_REGISTER 0x1003
@@ -24,10 +24,10 @@
 #define IDC_RADIO_LOGIN_USER 0x1008
 #define IDC_EDIT_PHONE 0x1009
 
-// 控制台控件
+// �������̨
 #define IDC_EDIT_PRINTF 0x100A
 
-// 管理员控制控件标识
+// ����Ա����ؼ����
 #define IDC_MENU_ADMIN_SYSMANAGE 0x100B
 #define IDC_MENU_ADMIN_LOGOUT 0x100C
 #define IDC_MENU_ADMIN_CHANGEPWD 0x100D
@@ -68,11 +68,11 @@
 #define IDC_MENU_ADMIN_COUNT_USER 0x102E
 #define IDC_MENU_ADMIN_COUNT_USERBYID 0x102F
 
-// 输入控件的标识
+// ����ؼ��ı��
 #define IDC_EDIT_WINSCANF 0x1030
 #define IDC_BTN_WINSCANF 0x1031
 
-// 教练控制控件标识
+// ��������ؼ����
 #define IDC_MENU_COACH_COURSETYPE_ADD 0x1032
 #define IDC_MENU_COACH_COURSETYPE_DELETE 0x1033
 #define IDC_MENU_COACH_SEARCH_COURSE_SHOW 0x1034
@@ -86,10 +86,10 @@
 #define IDC_MENU_COACH_COUNT_USERCOURSE 0x103C
 #define IDC_MENU_COACH_COUNT_USERCOURSEBYID 0x103D
 #define IDC_MENU_COACH_SYS_CHANGEPWD 0x103E
-// 0x103F已经使用过
+// 0x103F�Ѿ�ʹ����
 #define IDC_MENU_COACH_SYS_LOGOUT 0x1040
 
-// 用户控制控件标识
+// �û�������Ʊ��
 #define IDC_MENU_USER_SYS_CHANGEINFO 0x1041
 #define IDC_MENU_USER_SYS_CHANGEPWD 0x1042
 #define IDC_MENU_USER_SYS_LOGOUT 0x1043
@@ -102,21 +102,21 @@
 #define IDC_MENU_USER_COUNT_COURSETYPEBYID 0x104A
 #define IDC_MENU_USER_COUNT_COACH 0x104B
 #define IDC_MENU_USER_COUNT_COACHBYID 0x104C
-// 0x104D已经使用过
+// 0x104D�Ѿ�ʹ����
 
-// 显示登录窗口
+// ��ʾ��¼����
 int WINAPI showLoginWindow();
 
-// 显示管理员控制台
+// ��ʾ����Ա����̨
 int WINAPI showAdminDashboard();
 
-// 显示教练控制台
+// ��ʾ��������̨
 int WINAPI showCoachDashboard();
 
-// 显示学员控制台
+// ��ʾѧԱ����̨
 int WINAPI showUserDashboard();
 
-// 窗口接收输入（仅支持一个数据）
+// ���ڽ������루��֧��һ�����ݣ�
 bool winScanf(HWND hParent, const char* title, const char* format, void* p);
 
 #endif // !__GUI_H

@@ -8,108 +8,108 @@
 #define MAX_LEN 64
 
 typedef struct Admin {
-	int id;						// ç®¡ç†å‘˜ID
-	char username[MAX_STR];				// ç®¡ç†å‘˜è´¦æˆ·åç§°
-	char password[MAX_STR];				// ç®¡ç†å‘˜å¯†ç 
+	int id;								// ¹ÜÀíÔ±ID
+	char username[MAX_STR];				// ¹ÜÀíÔ±ÕË»§Ãû³Æ
+	char password[MAX_STR];				// ¹ÜÀíÔ±ÃÜÂë
 	union {
-		struct Admin* nextPointer;		// ä¸‹ä¸€ä¸ªç»“ç‚¹æŒ‡é’ˆï¼ˆå†…å­˜ä¸­ä¸ºå†…å­˜åœ°å€ï¼Œä¸å­˜åœ¨æ—¶ä¸ºNULLï¼‰
-		int nextOffset;				// ä¸‹ä¸€ä¸ªç»“ç‚¹åç§»ï¼ˆæ–‡ä»¶ä¸­ä¸ºæ–‡ä»¶åç§»ï¼Œä¸å­˜åœ¨ä¸º-1ï¼‰
+		struct Admin* nextPointer;		// ÏÂÒ»¸öÊı¾İÖ¸Õë£¨ÄÚ´æÖĞÎªÄÚ´æµØÖ·£¬²»´æÔÚÊ±ÎªNULL£©
+		int nextOffset;					// ÏÂÒ»¸öÊı¾İÆ«ÒÆ£¨ÎÄ¼şÖĞÎªÎÄ¼şÆ«ÒÆ£¬²»´æÔÚÎª-1£©
 	};
-	FileStatus status;				// å­˜åœ¨çŠ¶æ€
+	FileStatus status;					// Êı¾İ×´Ì¬
 }Admin;
 
 typedef enum CoachLevel {
 	COACH_LEVEL_FIVE_STAR, COACH_LEVEL_THREE_STAR, COACH_LEVEL_ONE_STAR
-}CoachLevel;						// æ•™ç»ƒæ˜Ÿçº§ 0-äº”æ˜Ÿçº§ï¼Œ1-ä¸‰æ˜Ÿçº§ï¼Œ 2-ä¸€æ˜Ÿçº§
+}CoachLevel;							// ½ÌÁ·ĞÇ¼¶ 0-ÎåĞÇ¼¶£¬1-ËÄĞÇ¼¶£¬ 2-ÈıĞÇ¼¶
 typedef enum CoachStatus {
 	COACH_STATUS_WAIT_FOR_CHECK, COACH_STATUS_PASS, COACH_STATUS_FAIL
-}CoachStatus;						// æ•™ç»ƒçŠ¶æ€ 0-å¾…å®¡ï¼Œ1-é€šè¿‡ï¼Œ2-æœªé€šè¿‡
+}CoachStatus;							// ÉóºË×´Ì¬ 0-´ıÉó£¬1-Í¨¹ı£¬2-Î´Í¨¹ı
 
 typedef struct Coach {
-	int id;						// æ•™ç»ƒç¼–å·
-	char name[MAX_STR];				// æ•™ç»ƒå§“å
-	char password[MAX_STR];				// æ•™ç»ƒå¯†ç 
-	CoachLevel level;				// æ•™ç»ƒæ˜Ÿçº§
-	CoachStatus expertise_status;		// è¯¥æ•™ç»ƒé¡¹ç›®å®¡æ ¸çŠ¶æ€
+	int id;								// ½ÌÁ·±àºÅ
+	char name[MAX_STR];					// ½ÌÁ·ĞÕÃû
+	char password[MAX_STR];				// ½ÌÁ·ÃÜÂë
+	CoachLevel level;					// ½ÌÁ·ĞÇ¼¶
+	CoachStatus expertise_status;		// ÉÃ³¤µÄÏîÄ¿ÉóºË×´Ì¬
 	union {
-		struct Coach* nextPointer;		// ä¸‹ä¸€ä¸ªç»“ç‚¹æŒ‡é’ˆï¼ˆå†…å­˜ä¸­ä¸ºå†…å­˜åœ°å€ï¼Œä¸å­˜åœ¨æ—¶ä¸ºNULLï¼‰
-		int nextOffset;				// ä¸‹ä¸€ä¸ªç»“ç‚¹åç§»ï¼ˆæ–‡ä»¶ä¸­ä¸ºæ–‡ä»¶åç§»ï¼Œä¸å­˜åœ¨ä¸º-1ï¼‰
+		struct Coach* nextPointer;		// ÏÂÒ»¸öÊı¾İÖ¸Õë£¨ÄÚ´æÖĞÎªÄÚ´æµØÖ·£¬²»´æÔÚÊ±ÎªNULL£©
+		int nextOffset;					// ÏÂÒ»¸öÊı¾İÆ«ÒÆ£¨ÎÄ¼şÖĞÎªÎÄ¼şÆ«ÒÆ£¬²»´æÔÚÎª-1£©
 	};
-	FileStatus status;				// å­˜åœ¨çŠ¶æ€
+	FileStatus status;					// Êı¾İ×´Ì¬
 }Coach;
 
 typedef struct CourseType {
-	int id;						// é¡¹ç›®ç±»å‹ç¼–å·
-	char name[MAX_STR];				// é¡¹ç›®åç§°
+	int id;								// ÏîÄ¿Àà±ğĞòºÅ
+	char name[MAX_STR];					// ÏîÄ¿Ãû³Æ
 	union {
-		struct CourseType* nextPointer;	// ä¸‹ä¸€ä¸ªç»“ç‚¹æŒ‡é’ˆï¼ˆå†…å­˜ä¸­ä¸ºå†…å­˜åœ°å€ï¼Œä¸å­˜åœ¨æ—¶ä¸ºNULLï¼‰
-		int nextOffset;				// ä¸‹ä¸€ä¸ªç»“ç‚¹åç§»ï¼ˆæ–‡ä»¶ä¸­ä¸ºæ–‡ä»¶åç§»ï¼Œä¸å­˜åœ¨ä¸º-1ï¼‰
+		struct CourseType* nextPointer;	// ÏÂÒ»¸öÊı¾İÖ¸Õë£¨ÄÚ´æÖĞÎªÄÚ´æµØÖ·£¬²»´æÔÚÊ±ÎªNULL£©
+		int nextOffset;					// ÏÂÒ»¸öÊı¾İÆ«ÒÆ£¨ÎÄ¼şÖĞÎªÎÄ¼şÆ«ÒÆ£¬²»´æÔÚÎª-1£©
 	};
-	FileStatus status;				// å­˜åœ¨çŠ¶æ€
+	FileStatus status;					// Êı¾İ×´Ì¬
 }CourseType;
 
 typedef struct CoachTypeRel {
-	int id;							// å…³ç³»ID
-	int coach_id;						// æ•™ç»ƒID
-	int type_id;						// é¡¹ç›®ç±»å‹ID
+	int id;									// ¹ØÏµID
+	int coach_id;							// ½ÌÁ·ID
+	int type_id;							// ÏîÄ¿ÀàĞÍID
 	union {
-		struct CoachTypeRel* nextPointer;	// ä¸‹ä¸€ä¸ªç»“ç‚¹æŒ‡é’ˆï¼ˆå†…å­˜ä¸­ä¸ºå†…å­˜åœ°å€ï¼Œä¸å­˜åœ¨æ—¶ä¸ºNULLï¼‰
-		int nextOffset;					// ä¸‹ä¸€ä¸ªç»“ç‚¹åç§»ï¼ˆæ–‡ä»¶ä¸­ä¸ºæ–‡ä»¶åç§»ï¼Œä¸å­˜åœ¨ä¸º-1ï¼‰
+		struct CoachTypeRel* nextPointer;	// ÏÂÒ»¸öÊı¾İÖ¸Õë£¨ÄÚ´æÖĞÎªÄÚ´æµØÖ·£¬²»´æÔÚÊ±ÎªNULL£©
+		int nextOffset;						// ÏÂÒ»¸öÊı¾İÆ«ÒÆ£¨ÎÄ¼şÖĞÎªÎÄ¼şÆ«ÒÆ£¬²»´æÔÚÎª-1£©
 	};
-	FileStatus status;					// å­˜åœ¨çŠ¶æ€
+	FileStatus status;						// Êı¾İ×´Ì¬
 }CoachTypeRel;
 
 typedef struct User {
-	int id;						// å­¦å‘˜ID
-	char name[MAX_STR];				// å§“å
-	char password[MAX_STR];				// ç™»å½•å¯†ç 
-	char phone[MAX_STR];				// è”ç³»æ–¹å¼åŒæ—¶ä¹Ÿæ˜¯ä¸€ç§ç™»å½•æ–¹å¼
+	int id;								// Ñ§Ô±ID
+	char name[MAX_STR];					// ĞÕÃû
+	char password[MAX_STR];				// µÇÂ¼ÃÜÂë
+	char phone[MAX_STR];				// ÁªÏµ·½Ê½Í¬Ê±Ò²ÊÇÕÒ»ØÃÜÂë·½Ê½
 	union {
-		struct User* nextPointer;		// ä¸‹ä¸€ä¸ªç»“ç‚¹æŒ‡é’ˆï¼ˆå†…å­˜ä¸­ä¸ºå†…å­˜åœ°å€ï¼Œä¸å­˜åœ¨æ—¶ä¸ºNULLï¼‰
-		int nextOffset;				// ä¸‹ä¸€ä¸ªç»“ç‚¹åç§»ï¼ˆæ–‡ä»¶ä¸­ä¸ºæ–‡ä»¶åç§»ï¼Œä¸å­˜åœ¨ä¸º-1ï¼‰
+		struct User* nextPointer;		// ÏÂÒ»¸öÊı¾İÖ¸Õë£¨ÄÚ´æÖĞÎªÄÚ´æµØÖ·£¬²»´æÔÚÊ±ÎªNULL£©
+		int nextOffset;					// ÏÂÒ»¸öÊı¾İÆ«ÒÆ£¨ÎÄ¼şÖĞÎªÎÄ¼şÆ«ÒÆ£¬²»´æÔÚÎª-1£©
 	};
-	FileStatus status;				// å­˜åœ¨çŠ¶æ€
+	FileStatus status;					// Êı¾İ×´Ì¬
 }User;
 
 typedef struct Course {
-	int id;						// è¯¾ç¨‹ç¼–å·
-	char name[MAX_STR];				// è¯¾ç¨‹åç§°
-	int type_id;					// è¯¾ç¨‹æ‰€å±é¡¹ç›®
-	int time;					// ç›¸å¯¹äº0å¹´0æ—¶çš„åˆ†é’Ÿæ•°
-	char location[MAX_STR];				// åœ°ç‚¹
-	int student_count;				// å½“å‰è¯¾ç¨‹æŠ¥åå­¦ç”Ÿæ•°é‡
-	int student_max;				// è¯¾ç¨‹æœ€å¤§å…è®¸å­¦ç”Ÿæ•°é‡
-	double price;					// è¯¾ç¨‹ä»·æ ¼
+	int id;								// ¿Î³ÌĞòºÅ
+	char name[MAX_STR];					// ¿Î³ÌĞÕÃû
+	int type_id;						// ¿Î³ÌËùÊôÏîÄ¿
+	int time;							// Ïà¶ÔÓÚ0µã0Ê±µÄ·ÖÖÓÊı
+	char location[MAX_STR];				// µØµã
+	int student_count;					// µ±Ç°¿Î³Ì±¨ÃûÑ§ÉúÊıÁ¿
+	int student_max;					// ¿Î³Ì×î¶àÈİÄÉÑ§ÉúÊıÁ¿
+	double price;						// ¿Î³Ì¼Û¸ñ
 	union {
-		struct Course* nextPointer;		// ä¸‹ä¸€ä¸ªç»“ç‚¹æŒ‡é’ˆï¼ˆå†…å­˜ä¸­ä¸ºå†…å­˜åœ°å€ï¼Œä¸å­˜åœ¨æ—¶ä¸ºNULLï¼‰
-		int nextOffset;				// ä¸‹ä¸€ä¸ªç»“ç‚¹åç§»ï¼ˆæ–‡ä»¶ä¸­ä¸ºæ–‡ä»¶åç§»ï¼Œä¸å­˜åœ¨ä¸º-1ï¼‰
+		struct Course* nextPointer;		// ÏÂÒ»¸öÊı¾İÖ¸Õë£¨ÄÚ´æÖĞÎªÄÚ´æµØÖ·£¬²»´æÔÚÊ±ÎªNULL£©
+		int nextOffset;					// ÏÂÒ»¸öÊı¾İÆ«ÒÆ£¨ÎÄ¼şÖĞÎªÎÄ¼şÆ«ÒÆ£¬²»´æÔÚÎª-1£©
 	};
-	FileStatus status;				// å­˜åœ¨çŠ¶æ€
+	FileStatus status;					// Êı¾İ×´Ì¬
 }Course;
 
 typedef struct CoachCourseRel {
-	int id;								// æ•™ç»ƒè¯¾ç¨‹å…³ç³»ID
-	int coachId;						// æ•™ç»ƒID
-	int courseId;						// è¯¾ç¨‹ID
+	int id;										// ½ÌÁ·¿Î³Ì¹ØÏµID
+	int coachId;								// ½ÌÁ·ID
+	int courseId;								// ¿Î³ÌID
 	union {
-		struct CoachCourseRel* nextPointer;		// ä¸‹ä¸€ä¸ªç»“ç‚¹æŒ‡é’ˆï¼ˆå†…å­˜ä¸­ä¸ºå†…å­˜åœ°å€ï¼Œä¸å­˜åœ¨æ—¶ä¸ºNULLï¼‰
-		int nextOffset;						// ä¸‹ä¸€ä¸ªç»“ç‚¹åç§»ï¼ˆæ–‡ä»¶ä¸­ä¸ºæ–‡ä»¶åç§»ï¼Œä¸å­˜åœ¨ä¸º-1ï¼‰
+		struct CoachCourseRel* nextPointer;		// ÏÂÒ»¸öÊı¾İÖ¸Õë£¨ÄÚ´æÖĞÎªÄÚ´æµØÖ·£¬²»´æÔÚÊ±ÎªNULL£©
+		int nextOffset;							// ÏÂÒ»¸öÊı¾İÆ«ÒÆ£¨ÎÄ¼şÖĞÎªÎÄ¼şÆ«ÒÆ£¬²»´æÔÚÎª-1£©
 	};
-	FileStatus status;						// å­˜åœ¨çŠ¶æ€
+	FileStatus status;							// Êı¾İ×´Ì¬
 }CoachCourseRel;
 
 typedef struct UserCourseRel {
-	int id;								// å…³ç³»ID
-	int user_id;						// ç”¨æˆ·ID
-	int course_id;						// è¯¾ç¨‹ID
+	int id;										// ¹ØÏµID
+	int user_id;								// ÓÃ»§ID
+	int course_id;								// ¿Î³ÌID
 	union {
-		struct UserCourseRel* nextPointer;		// ä¸‹ä¸€ä¸ªç»“ç‚¹æŒ‡é’ˆï¼ˆå†…å­˜ä¸­ä¸ºå†…å­˜åœ°å€ï¼Œä¸å­˜åœ¨æ—¶ä¸ºNULLï¼‰
-		int nextOffset;						// ä¸‹ä¸€ä¸ªç»“ç‚¹åç§»ï¼ˆæ–‡ä»¶ä¸­ä¸ºæ–‡ä»¶åç§»ï¼Œä¸å­˜åœ¨ä¸º-1ï¼‰
+		struct UserCourseRel* nextPointer;		// ÏÂÒ»¸öÊı¾İÖ¸Õë£¨ÄÚ´æÖĞÎªÄÚ´æµØÖ·£¬²»´æÔÚÊ±ÎªNULL£©
+		int nextOffset;							// ÏÂÒ»¸öÊı¾İÆ«ÒÆ£¨ÎÄ¼şÖĞÎªÎÄ¼şÆ«ÒÆ£¬²»´æÔÚÎª-1£©
 	};
-	FileStatus status;						// å­˜åœ¨çŠ¶æ€
+	FileStatus status;							// Êı¾İ×´Ì¬
 }UserCourseRel;
 
-// ç”ŸæˆåŸºç¡€æ•°æ®çš„CRUDå‡½æ•°å£°æ˜å®
+// ¶¨Òå¸÷±í»ù±¾CRUD²Ù×÷µÄº¯ÊıÉùÃ÷
 #define GENERATE_BASE_CRUD_FUNCTION_DECLARATION(structName) \
 bool insertFor##structName(structName* data); \
 int getOffsetByIdFor##structName(int id); \
@@ -119,7 +119,7 @@ bool deleteByIdFor##structName(int id); \
 structName* selectAllFor##structName(void* (*filter)(void*)); \
 void printLinkFor##structName(structName* header);
 
-// å±•å¼€åŸºç¡€æ•°æ®çš„CRUDå‡½æ•°å£°æ˜å®
+// Õ¹¿ª¸÷±í»ù±¾CRUD²Ù×÷µÄº¯ÊıÉùÃ÷
 GENERATE_BASE_CRUD_FUNCTION_DECLARATION(Admin);
 GENERATE_BASE_CRUD_FUNCTION_DECLARATION(Course);
 GENERATE_BASE_CRUD_FUNCTION_DECLARATION(CourseType);
@@ -129,15 +129,15 @@ GENERATE_BASE_CRUD_FUNCTION_DECLARATION(CoachTypeRel);
 GENERATE_BASE_CRUD_FUNCTION_DECLARATION(User);
 GENERATE_BASE_CRUD_FUNCTION_DECLARATION(UserCourseRel);
 
-// æ•°æ®çš„è¯¦æƒ…æ‰“å°å‡½æ•°å£°æ˜ï¼ˆå¸¦å…³è”æ•°æ®ï¼‰
+// Êı¾İµÄÁ¬±í´òÓ¡²Ù×÷¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª
 
 void printLinkForCoachDetails(Coach* header);
 
 void printLinkForUserDetails(User* header);
 
-// æ•°æ®è¯¦æƒ…æ‰“å°å‡½æ•°å£°æ˜ç»“æŸï¼ˆå¸¦å…³è”æ•°æ®ï¼‰
+// ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ªÊı¾İµÄÁ¬±í´òÓ¡²Ù×÷
 
-// ç”Ÿæˆé“¾è¡¨å†…å­˜é‡Šæ”¾å‡½æ•°å£°æ˜å®
+// ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ªÁ´±í»ØÊÕº¯Êı
 
 #define GENERATE_FREE_LINK_DECLARATION(structName) \
 void free##structName##List(structName* header);
@@ -151,27 +151,27 @@ GENERATE_FREE_LINK_DECLARATION(CoachTypeRel);
 GENERATE_FREE_LINK_DECLARATION(User);
 GENERATE_FREE_LINK_DECLARATION(UserCourseRel);
 
-// å†…å­˜é‡Šæ”¾å‡½æ•°å£°æ˜å®ç»“æŸï¼ˆå¸¦å…³è”æ•°æ®ï¼‰
+// Á´±í»ØÊÕº¯Êı¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª
 
-// å¯†ç å¤„ç†ä¸éªŒè¯å‡½æ•°å£°æ˜ï¼ˆå¸¦å…³è”æ•°æ®ï¼‰
+// ÃÜÂë´¦ÀíÑéÖ¤¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª
 
 #define PWD_ENCRPY_VAL 0x0
 
 /**
-* ç”Ÿæˆå¯†ç åŠ å¯†åçš„å­—ç¬¦ä¸²
-* @param password å¯†ç 
-* @return åŠ å¯†åçš„å­—ç¬¦ä¸²
+* Éú³ÉÃÜÂë¼ÓÃÜºóµÄ×Ö·û´®
+* @param password ÃÜÂë
+* @return ¼ÓÃÜºóµÄ×Ö·û´®
 */
 char* generateEncryptPassword(char* password);
 
 /**
-* éªŒè¯å¯†ç æ˜¯å¦æ­£ç¡®
-* @param password å¯†ç 
-* @param encryptPassword åŠ å¯†åçš„å­—ç¬¦ä¸²
-* @return æ˜¯å¦æ­£ç¡®
+* ÑéÖ¤ÃÜÂëÊÇ·ñÕıÈ·
+* @param password ÃÜÂë
+* @param encryptPassword ¼ÓÃÜºóµÄ×Ö·û´®
+* @return ÊÇ·ñÕıÈ·
 */
 bool verifyPassword(char* password, char* encryptPassword);
 
-// å¯†ç å¤„ç†ä¸éªŒè¯å‡½æ•°å£°æ˜ç»“æŸï¼ˆå¸¦å…³è”æ•°æ®ï¼‰
+// ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ªÃÜÂë´¦ÀíÑéÖ¤
 
 #endif // !__STRUCTS_H

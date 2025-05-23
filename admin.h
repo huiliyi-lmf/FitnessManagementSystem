@@ -1,236 +1,270 @@
 #ifndef __ADMIN_H
 #define __ADMIN_H
 
+#include <stdbool.h>
 #include "structs.h"
+#include <stdlib.h>
+#include <math.h>
 #include "filter.h"
 
-// å½“å‰ç”¨æˆ·ç™»å½•çš„ä¿¡æ¯
-extern int CURRENT_ADMIN_ID;
-
 /**
- * ç™»å½•åˆ¤æ–­
- * @param userName ç”¨æˆ·å
- * @param password å¯†ç 
- * @return å¯†ç æ˜¯å¦æ­£ç¡®
+ * µÇÂ¼ÅĞ¶Ï
+ * @param userName ÓÃ»§Ãû
+ * @param password ÃÜÂë
+ * @return ÃÜÂëÊÇ·ñÕıÈ·
  */
 bool loginForAdmin(char* userName, char* password);
 
 /**
- * æ³¨å†Œç®¡ç†å‘˜
- * @param userName ç”¨æˆ·å
- * @param password å¯†ç 
- * @return æ˜¯å¦æˆåŠŸ
+ * ×¢²á¹ÜÀíÔ±
+ * @param userName ÓÃ»§Ãû
+ * @param password ÃÜÂë
+ * @return ÊÇ·ñ³É¹¦
  */
 bool registerForAdmin(char* userName, char* password);
 
-/**
- * ä¿®æ”¹å¯†ç 
- * @param oldPassword æ—§å¯†ç 
- * @param newPassword æ–°å¯†ç 
- * @return æ˜¯å¦æˆåŠŸ
- */
-bool changePasswordForAdmin(char* oldPassword, char* newPassword);
+// ĞÅÏ¢¹ÜÀí£ºÔö¼Ó£¬ĞŞ¸Ä£¬É¾³ı¡ª¡ª¡ª¡ª
 
 /**
- * ä¿®æ”¹æ•™ç»ƒå¯†ç 
- * @param coachId æ•™ç»ƒID
- * @param newPassword æ–°å¯†ç 
- * @return æ˜¯å¦æˆåŠŸ
+ * ´´½¨Ò»¸öĞÂµÄÏîÄ¿ÀàĞÍ
+ * @param typeName ÏîÄ¿Ãû³Æ
  */
-bool changePasswordForCoach(int coachId, char* newPassword);
+bool createCourseType(char* typeName);
 
 /**
- * å¤‡ä»½æ•°æ®
- * @return æ˜¯å¦æˆåŠŸ
+ * ĞŞ¸ÄÄ³¸öÏîÄ¿Ãû³Æ
+ * @param id ÏîÄ¿±àºÅ
+ * @param typeName ĞŞ¸ÄºóµÄÃû³Æ
  */
-bool backupData();
+bool updateCourseType(int id, char* typeName);
 
 /**
- * æ¢å¤æ•°æ®
- * @return æ˜¯å¦æˆåŠŸ
- */
-bool restoreData();
-
-/**
- * åˆ›å»ºè¯¾ç¨‹ç±»å‹
- * @param name è¯¾ç¨‹ç±»å‹åç§°
- * @return æ˜¯å¦æˆåŠŸ
- */
-bool createCourseType(char* name);
-
-/**
- * æ›´æ–°è¯¾ç¨‹ç±»å‹
- * @param id è¯¾ç¨‹ç±»å‹ID
- * @param name è¯¾ç¨‹ç±»å‹åç§°
- * @return æ˜¯å¦æˆåŠŸ
- */
-bool updateCourseType(int id, char* name);
-
-/**
- * åˆ é™¤è¯¾ç¨‹ç±»å‹
- * @param id è¯¾ç¨‹ç±»å‹ID
- * @return æ˜¯å¦æˆåŠŸ
+ * É¾³ıÏîÄ¿
+ * @param id ÏîÄ¿ID
  */
 bool deleteCourseType(int id);
 
 /**
- * æ˜¾ç¤ºæ‰€æœ‰è¯¾ç¨‹ç±»å‹
+ * ´´½¨ĞÂµÄ½ÌÁ·ÕË»§
+ * @param coachName ½ÌÁ·ĞÕÃû
+ * @param coachPassword ½ÌÁ·ÃÜÂë
  */
-void showAllCourseType();
+bool createCoach(char* coachName, char* coachPassword);
 
 /**
- * åˆ›å»ºæ•™ç»ƒ
- * @param name æ•™ç»ƒå§“å
- * @param password æ•™ç»ƒå¯†ç 
- * @param level æ•™ç»ƒæ˜Ÿçº§
- * @return æ˜¯å¦æˆåŠŸ
+ * ĞŞ¸Ä½ÌÁ·ĞÅÏ¢£¨Èç¹ûÎªNULLµÄÏîÔò²»ĞŞ¸Ä£©
+ * @param id ½ÌÁ·ID
+ * @param newCoachName ½ÌÁ·ĞÕÃû
+ * @param newCoachPassword  ½ÌÁ·ÃÜÂë
+ * @param newLevel  ½ÌÁ·ÆÀ¼¶£¨Îª-1Ôò²»ĞŞ¸Ä£©
  */
-bool createCoach(char* name, char* password, CoachLevel level);
+bool updateCoach(int id, char* newCoachName, char* newCoachPassword, CoachLevel newLevel);
 
 /**
- * æ›´æ–°æ•™ç»ƒ
- * @param id æ•™ç»ƒID
- * @param name æ•™ç»ƒå§“å
- * @param level æ•™ç»ƒæ˜Ÿçº§
- * @return æ˜¯å¦æˆåŠŸ
- */
-bool updateCoach(int id, char* name, CoachLevel level);
-
-/**
- * åˆ é™¤æ•™ç»ƒ
- * @param id æ•™ç»ƒID
- * @return æ˜¯å¦æˆåŠŸ
+ * É¾³ı½ÌÁ·ĞÅÏ¢
+ * @param id ½ÌÁ·ID
  */
 bool deleteCoach(int id);
 
-/**
- * æ˜¾ç¤ºæ‰€æœ‰æ•™ç»ƒ
- */
-void showAllCoach();
+// ¡ª¡ª¡ª¡ª¡ªĞÅÏ¢¹ÜÀí£ºÔö¼Ó£¬ĞŞ¸Ä£¬É¾³ı
+
+// ½ÌÁ·¹ÜÀí
+
+// ²é¿´ËùÓĞ½ÌÁ·ĞÅÏ¢
+bool showAllCoachInfo();
+
+// ²é¿´ËùÓĞ¿Î³ÌÀà±ğĞÅÏ¢
+bool showAllCourseTypeInfo();
 
 /**
- * æ˜¾ç¤ºå¾…å®¡æ ¸æ•™ç»ƒ
+ * ²é¿´½ÌÁ·Ìá½»µÄ×Ô¼ºÉÃ³¤Ö¸µ¼µÄÏîÄ¿ÀàĞÍÉêÇë
  */
-void showJudgeCoach();
+bool showNeedJudgeCoachInfo();
 
 /**
- * æ ‡è®°æ•™ç»ƒå®¡æ ¸çŠ¶æ€
- * @param id æ•™ç»ƒID
- * @param status å®¡æ ¸çŠ¶æ€
- * @return æ˜¯å¦æˆåŠŸ
+ * ÉóºË½ÌÁ·ĞÅÏ¢µÄ½á¹û
+ * @param id ½ÌÁ·ID
+ * @param status ½ÌÁ·ĞÅÏ¢
  */
-bool markJudgeCoach(int id, CoachStatus status);
+bool markJudgeCoachInfoStatus(int id, CoachStatus status);
+
+// ½ÌÁ·¹ÜÀí
+
+// ¿Î³Ì¹ÜÀí
 
 /**
- * åˆ›å»ºè¯¾ç¨‹
- * @param name è¯¾ç¨‹åç§°
- * @param typeId è¯¾ç¨‹ç±»å‹ID
- * @param time è¯¾ç¨‹æ—¶é—´ï¼ˆç›¸å¯¹äº0å¹´0æ—¶çš„åˆ†é’Ÿæ•°ï¼‰
- * @param location è¯¾ç¨‹åœ°ç‚¹
- * @param studentMax è¯¾ç¨‹æœ€å¤§å­¦ç”Ÿæ•°
- * @param price è¯¾ç¨‹ä»·æ ¼
- * @return æ˜¯å¦æˆåŠŸ
+ * ´´½¨Ò»¸öĞÂµÄ¿Î³Ì
+ * @param courseName ¿Î³ÌÃû³Æ
+ * @param courseType ¿Î³ÌÀà±ğ
+ * @param time Ê±¼ä
+ * @param location µØµã
+ * @param stuMax ×î´óÑ§ÉúÊıÁ¿
+ * @param price ¼Û¸ñ
  */
-bool createCourse(char* name, int typeId, int time, char* location, int studentMax, double price);
+bool createCourse(char* courseName, int courseType, int time, char* location, int stuMax, double price);
 
 /**
- * æ›´æ–°è¯¾ç¨‹
- * @param id è¯¾ç¨‹ID
- * @param name è¯¾ç¨‹åç§°
- * @param typeId è¯¾ç¨‹ç±»å‹ID
- * @param time è¯¾ç¨‹æ—¶é—´ï¼ˆç›¸å¯¹äº0å¹´0æ—¶çš„åˆ†é’Ÿæ•°ï¼‰
- * @param location è¯¾ç¨‹åœ°ç‚¹
- * @param studentMax è¯¾ç¨‹æœ€å¤§å­¦ç”Ÿæ•°
- * @param price è¯¾ç¨‹ä»·æ ¼
- * @return æ˜¯å¦æˆåŠŸ
+ * ĞŞ¸Ä¿Î³ÌĞÅÏ¢
+ * @param id ¿Î³ÌID
+ * @param courseName ¿Î³ÌÃû³Æ
+ * @param courseType ¿Î³ÌÀà±ğ
+ * @param time Ê±¼ä
+ * @param location µØµã
+ * @param stuMax ×î´óÑ§ÉúÊıÁ¿
+ * @param price ¼Û¸ñ
  */
-bool updateCourse(int id, char* name, int typeId, int time, char* location, int studentMax, double price);
+bool updateCourse(int id, char* courseName, int courseType, int time, char* location, int stuMax, double price);
+
+// ¿Î³Ì¹ÜÀí
+
+// ·ÖÅÉºÍµ÷Õû½¡Éí¿Î³ÌµÄ½ÌÁ·
 
 /**
- * åˆ é™¤è¯¾ç¨‹
- * @param id è¯¾ç¨‹ID
- * @return æ˜¯å¦æˆåŠŸ
+ * Ìí¼Ó½ÌÁ·ºÍ¿Î³Ì¹ØÏµ
+ * @param courseId ¿Î³ÌID
+ * @param coachId ½ÌÁ·ID
  */
-bool deleteCourse(int id);
+bool addCoachCourseRel(int courseId, int coachId);
 
 /**
- * æ·»åŠ æ•™ç»ƒè¯¾ç¨‹å…³ç³»
- * @param coachId æ•™ç»ƒID
- * @param courseId è¯¾ç¨‹ID
- * @return æ˜¯å¦æˆåŠŸ
+ * É¾³ı½ÌÁ·ºÍ¿Î³Ì¹ØÏµ
+ * @param courseId ¿Î³ÌID
+ * @param coachId ½ÌÁ·ID
  */
-bool addCoachCourseRel(int coachId, int courseId);
+bool deleteCoachCourseRel(int courseId, int coachId);
+
+// ·ÖÅÉºÍµ÷Õû½¡Éí¿Î³ÌµÄ½ÌÁ·
+
+// ĞÅÏ¢²éÑ¯
 
 /**
- * åˆ é™¤æ•™ç»ƒè¯¾ç¨‹å…³ç³»
- * @param id å…³ç³»ID
- * @return æ˜¯å¦æˆåŠŸ
+ * ´òÓ¡ËùÓĞ¿Î³ÌĞÅÏ¢
  */
-bool deleteCoachCourseRel(int id);
+bool showCourseInfoForAdmin();
 
 /**
- * æ˜¾ç¤ºæ‰€æœ‰è¯¾ç¨‹
+ * ²éÑ¯¿Î³ÌĞÅÏ¢£¨null»òÕß-1µÄÏîÄ¿ÔòËµÃ÷²»Ê¹ÓÃÕâ¸öÌõ¼ş£©
+ * @param courseName ¿Î³ÌÃû³Æ
+ * @param courseType ¿Î³ÌÀàĞÍ
+ * @param location ¿Î³ÌµØµã
+ * @param stuMax_low ×î´óÑ§Éú£¨×óÇø¼ä£©
+ * @param stuMax_high ×î´óÑ§Éú£¨ÓÒÇø¼ä£©
+ * @param price_low ¼Û¸ñ£¨×óÇø¼ä£©
+ * @param price_high ¼Û¸ñ£¨ÓÒÇø¼ä£©
+ * @param time_low Ê±¼ä£¨×óÇø¼ä£©
+ * @param time_high Ê±¼ä£¨ÓÒÇø¼ä£©
  */
-void showAllCourse();
+bool searchCourseInfoForAdmin(char* courseName, char* courseType, char* location, int stuMax_low, int stuMax_high, double price_low, double price_high, int time_low, int time_high);
 
 /**
- * æœç´¢è¯¾ç¨‹
- * @param name è¯¾ç¨‹åç§°
+ * ²é¿´ËùÓĞÑ§Ô±ĞÅÏ¢
  */
-void searchCourse(char* name);
+bool showUserInfoForAdmin();
 
 /**
- * æ˜¾ç¤ºæ‰€æœ‰ç”¨æˆ·
+ * ²éÑ¯Ä³Ñ§Ô±ĞÅÏ¢
+ * @param userName ÓÃ»§Ãû
  */
-void showAllUser();
+bool searchUserInfoForAdmin(char* userName);
+
+// ĞÅÏ¢²éÑ¯
+
+// ĞÅÏ¢ÅÅĞò
+
+Course* sortCourseInfo(Course* courses, int byName, int byTypeId, int byTime, int byLocation, int byStuCount, int byStuMax, int byCoachNum, int byPrice);
 
 /**
- * æœç´¢ç”¨æˆ·
- * @param phone ç”¨æˆ·æ‰‹æœºå·
+ * ¶Ô¿Î³ÌĞÅÏ¢½øĞĞÅÅĞò
+ * Ã¿¸ö¹Ø¼ü×ÖµÄÖµÎªÕıÊıÊ±ÔòËµÃ÷ÎªÉıĞòÅÅĞò£¬Îª¸ºÊıÊ±ÔòÎª½µĞòÅÅĞò
+ * Èç¹û¹Ø¼ü×ÖµÄÖµÎª0Ôò²»²ÎÓëÅÅĞò£¬¹Ø¼ü×ÖµÄ¾ø¶ÔÖµÔ½Ğ¡£¬ÔòËµÃ÷ÓÅÏÈ¶ÈÔ½¸ß
+ * Á½¸öÖµ·ÇÁãµÄ¹Ø¼ü×ÖµÄ¾ø¶ÔÖµ²»Ó¦¸ÃÏàÍ¬
+ * @param byName   °´Ãû³Æ
+ * @param byTypeId °´ÀàĞÍID
+ * @param byTime °´Ê±¼ä
+ * @param byLocation °´µØµã
+ * @param byStuCount °´ËùÑ¡Ñ§ÉúÊıÁ¿
+ * @param byStuMax °´×î´óÑ§ÉúÊıÁ¿
+ * @param byCoachNum °´½ÌÁ·ÊıÁ¿
+ * @param byPrice °´¼Û¸ñ
  */
-void searchUser(char* phone);
+bool sortCourseInfoForAdmin(int byName, int byTypeId, int byTime, int byLocation, int byStuCount, int byStuMax, int byCoachNum, int byPrice);
+
+User* sortUserInfo(User* users, int byName, int bySelectCourse);
 
 /**
- * æŒ‰ç…§ä»·æ ¼æ’åºè¯¾ç¨‹
+ * ÅÅĞòÑ§Ô±ĞÅÏ¢
+ * @param byName °´Ãû³Æ
+ * @param bySelectCourse °´ËùÑ¡¿Î³ÌÊıÁ¿
  */
-void sortCourseByPrice();
+bool sortUserInfoForAdmin(int byName, int bySelectCourse);
+
+// ĞÅÏ¢ÅÅĞò
+
+// ĞÅÏ¢Í³¼Æ
 
 /**
- * æŒ‰ç…§å§“åæ’åºç”¨æˆ·
+ * ´òÓ¡ËùÓĞÀàĞÍ¿Î³ÌµÄÑ§Ô±ÊıÁ¿
  */
-void sortUserByName();
+bool countCourseTypeSelectedForAdmin();
 
 /**
- * ç»Ÿè®¡è¯¾ç¨‹æ•°é‡
+ * ´òÓ¡Ä³¸öÀàĞÍ¿Î³ÌµÄÑ§Ô±ÊıÁ¿
+ * @param courseTypeId ¿Î³ÌÀàĞÍID
  */
-void countCourse();
+bool countCourseTypeSelectedByIdForAdmin(int courseTypeId);
 
 /**
- * ç»Ÿè®¡æŒ‡å®šè¯¾ç¨‹çš„å­¦ç”Ÿæ•°é‡
- * @param courseId è¯¾ç¨‹ID
+ * ´òÓ¡ËùÓĞ½ÌÁ·¸ºÔğµÄ½¡Éí¿Î³ÌÃÅÊı
  */
-void countCourseById(int courseId);
+bool countCoachCourseForAdmin();
 
 /**
- * ç»Ÿè®¡æ•™ç»ƒæ•°é‡
+ * ´òÓ¡Ä³½ÌÁ·¸ºÔğµÄ½¡Éí¿Î³ÌÃÅÊı
+ * @param coachId ½ÌÁ·ID
  */
-void countCoach();
+bool countCoachCourseByIdForAdmin(int coachId);
 
 /**
- * ç»Ÿè®¡æŒ‡å®šæ•™ç»ƒçš„è¯¾ç¨‹æ•°é‡
- * @param coachId æ•™ç»ƒID
+ * ´òÓ¡ËùÓĞÑ§Ô±²Î¼ÓµÄ½¡Éí¿Î³ÌµÄÃÅÊı
  */
-void countCoachById(int coachId);
+bool countUserCourseForAdmin();
 
 /**
- * ç»Ÿè®¡ç”¨æˆ·æ•°é‡
+ * ´òÓ¡Ä³Ñ§Ô±²Î¼ÓµÄ½¡Éí¿Î³ÌµÄÃÅÊı
+ * @param userId Ñ§Ô±ID
  */
-void countUser();
+bool countUserCourseByIdForAdmin(int userId);
+
+// ĞÅÏ¢Í³¼Æ
+
+// ÏµÍ³Î¬»¤
 
 /**
- * ç»Ÿè®¡æŒ‡å®šç”¨æˆ·çš„è¯¾ç¨‹æ•°é‡
- * @param userId ç”¨æˆ·ID
+ * ĞŞ¸Ä¹ÜÀíÔ±ÃÜÂë£¨IDÓÉµÇÂ¼º¯Êı¼ÇÂ¼£©
+ * @param newPassword ĞÂÃÜÂë
+ * @return ÊÇ·ñ³É¹¦
  */
-void countUserById(int userId);
+bool changePasswordForAdmin(char* newPassword);
 
-#endif // !__ADMIN_H
+/**
+ * ĞŞ¸Ä½ÌÁ·ÃÜÂë
+ * @param coachId ½ÌÁ·ID
+ * @param newPassword ĞÂÃÜÂë
+ */
+bool changeCoachPasswordForAdmin(int coachId, char* newPassword);
+
+/**
+ * Êı¾İ±¸·İ
+ * @param backupName ±¸·İÃû³Æ
+ */
+bool databaseBackup(char* backupName);
+
+/**
+ * Êı¾İ»Ö¸´
+ * @param backupName ±¸·İÃû³Æ
+ */
+bool databaseRestore(char* backupName);
+
+// ÏµÍ³Î¬»¤
+
+#endif // !__ADMIN__H

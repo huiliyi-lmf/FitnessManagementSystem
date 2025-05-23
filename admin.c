@@ -2,89 +2,1565 @@
 #include "admin.h"
 #include <string.h>
 
-// å½“å‰ç™»å½•çš„ç®¡ç†å‘˜ID
+// µ±Ç°ÓÃ»§µÇÂ¼µÄĞÅÏ¢
 int CURRENT_ADMIN_ID = -1;
 
 /**
- * ç®¡ç†å‘˜ç™»å½•
- * @param username ç”¨æˆ·å
- * @param password å¯†ç 
- * @return æ˜¯å¦æˆåŠŸ
+ * µÇÂ¼ÅĞ¶Ï
+ * @param userName ÓÃ»§Ãû
+ * @param password ÃÜÂë
+ * @return ÃÜÂëÊÇ·ñÕıÈ·
  */
-bool loginForAdmin(char* username, char* password) {
-    // å‚æ•°æ ¡éªŒ
-    if (username == NULL || password == NULL) {
-        warnInfo("ç™»å½•å¤±è´¥ï¼šç”¨æˆ·åæˆ–å¯†ç ä¸ºç©º");
+bool loginForAdmin(char* userName, char* password) {
+    // ²ÎÊıĞ£Ñé
+    if (userName == NULL || password == NULL) {
+        warnInfo("µÇÂ¼Ê§°Ü£ºÓÃ»§Ãû»òÃÜÂëÎª¿Õ");
         return false;
     }
 
-    // è·å–æ‰€æœ‰æœ‰æ•ˆç®¡ç†å‘˜
-    setFilterStrFlag(username);
+    // »ñÈ¡ÓĞĞ§¹ÜÀíÔ±¼ÇÂ¼
+    setFilterStrFlag(userName);
     Admin* adminList = selectAllForAdmin(filterAdminByUsername);
     clearFilterStrFlag();
+
     if (adminList == NULL) {
-        warnInfo("ç™»å½•å¤±è´¥ï¼šæ— ç®¡ç†å‘˜è´¦å·å­˜åœ¨");
+        warnInfo("µÇÂ¼Ê§°Ü£ºÎŞ¹ÜÀíÔ±ÕËºÅÊı¾İ");
         return false;
     }
-
     bool loginSuccess = false;
-    // å®‰å…¨æ¯”è¾ƒç”¨æˆ·åå’Œå¯†ç 
-    if (verifyPassword(password, adminList->password)) {
-        loginSuccess = true;
-        CURRENT_ADMIN_ID = adminList->id;
-    }
-    else {
-        warnInfo("ç™»å½•å¤±è´¥ï¼šç”¨æˆ·åæˆ–å¯†ç é”™è¯¯");
-        return false;
+    // °²È«±È½ÏÓÃ»§ÃûºÍÃÜÂë
+    if (strcmp(adminList->username, userName) == 0) {
+        if (verifyPassword(password, adminList->password)) {
+            loginSuccess = true;
+            CURRENT_ADMIN_ID = adminList->id;
+        } else {
+            errorInfo("µÇÂ¼Ê§°Ü£ºÓÃ»§Ãû»òÃÜÂë´íÎó");
+            return false;
+        }
     }
 
-    // é‡Šæ”¾åˆ†é…å†…å­˜
+    // ÊÍ·ÅÁ´±íÄÚ´æ
     freeAdminList(adminList);
-
-    // é”™è¯¯æç¤º
+    // ´íÎóÌáÊ¾
     if (!loginSuccess) {
-        warnInfo("ç™»å½•å¤±è´¥ï¼šç”¨æˆ·åæˆ–å¯†ç é”™è¯¯");
+        errorInfo("µÇÂ¼Ê§°Ü£ºÓÃ»§Ãû»òÃÜÂë´íÎó");
     }
 
     return loginSuccess;
 }
 
 /**
- * ç®¡ç†å‘˜æ³¨å†Œ
- * @param username ç”¨æˆ·å
- * @param password å¯†ç 
- * @return æ˜¯å¦æˆåŠŸ
+ * ×¢²á¹ÜÀíÔ±
+ * @param userName ÓÃ»§Ãû
+ * @param password ÃÜÂë
+ * @return ÊÇ·ñ³É¹¦
  */
-bool registerForAdmin(char* username, char* password) {
-    // å‚æ•°æ ¡éªŒ
-    if (username == NULL || password == NULL) {
-        warnInfo("æ³¨å†Œå¤±è´¥ï¼šç”¨æˆ·åæˆ–å¯†ç ä¸ºç©º");
+bool registerForAdmin(char* userName, char* password) {
+    // --------------- ²ÎÊıĞ£Ñé ---------------
+    if (userName == NULL || password == NULL) {
+        warnInfo("×¢²áÊ§°Ü£ºÓÃ»§Ãû»òÃÜÂëÎª¿Õ");
+        return false;
+    }
+    if (strlen(userName) == 0 || strlen(password) == 0) {
+        warnInfo("×¢²áÊ§°Ü£ºÓÃ»§Ãû»òÃÜÂë²»ÄÜÎª¿Õ");
+        return false;
+    }
+    if (strlen(userName) >= MAX_STR || strlen(password) >= MAX_STR) {
+        warnInfo("×¢²áÊ§°Ü£ºÓÃ»§Ãû»òÃÜÂë³¤¶È³¬¹ıÏŞÖÆ");
         return false;
     }
 
-    // æ£€æŸ¥ç”¨æˆ·åæ˜¯å¦å·²å­˜åœ¨
-    setFilterStrFlag(username);
-    Admin* existingAdmin = selectAllForAdmin(filterAdminByUsername);
+    // --------------- ÓÃ»§Ãû²éÖØ ---------------
+    setFilterStrFlag(userName);
+    Admin* adminList = selectAllForAdmin(filterAdminByUsername);  // »ñÈ¡ËùÓĞ¹ÜÀíÔ±
     clearFilterStrFlag();
-    if (existingAdmin != NULL) {
-        warnInfo("æ³¨å†Œå¤±è´¥ï¼šç”¨æˆ·åå·²å­˜åœ¨");
-        freeAdminList(existingAdmin);
+    if (adminList != NULL) {
+        warnInfo("×¢²áÊ§°Ü£ºÓÃ»§ÃûÒÑ´æÔÚ");
+        freeAdminList(adminList);  // ÊÍ·ÅÁ´±íÄÚ´æ
         return false;
     }
 
-    // åˆ›å»ºæ–°ç®¡ç†å‘˜
+    // --------------- ´´½¨¹ÜÀíÔ±¶ÔÏó ---------------
     Admin newAdmin;
-    strcpy(newAdmin.username, username);
-    encryptPassword(password, newAdmin.password);
+    memset(&newAdmin, 0, sizeof(Admin));
+    strcpy(newAdmin.username, userName);
+    char* encryptPassword = generateEncryptPassword(password);
+    strcpy(newAdmin.password, encryptPassword);
+    free(encryptPassword);
     newAdmin.status = FILE_STATUS_EXIST;
 
-    // æ’å…¥åˆ°æ•°æ®åº“
+    // --------------- ²åÈëÊı¾İ ---------------
     if (insertForAdmin(&newAdmin)) {
-        puts("ç®¡ç†å‘˜æ³¨å†ŒæˆåŠŸ");
+        return true;
+    } else {
+        errorInfo("×¢²áÊ§°Ü£ºÊı¾İĞ´ÈëÊ§°Ü");
+        return false;
+    }
+}
+
+// ĞÅÏ¢¹ÜÀí£ºÔö¼Ó£¬ĞŞ¸Ä£¬É¾³ı¡ª¡ª¡ª¡ª
+
+/**
+ * ´´½¨Ò»¸öĞÂµÄÏîÄ¿ÀàĞÍ
+ * @param typeName ÏîÄ¿Ãû³Æ
+ */
+bool createCourseType(char* typeName) {
+    // --------------- ²ÎÊıĞ£Ñé ---------------
+    if (typeName == NULL || strlen(typeName) == 0) {
+        warnInfo("´´½¨Ê§°Ü£ºÏîÄ¿Ãû³Æ²»ÄÜÎª¿Õ");
+        return false;
+    }
+    if (strlen(typeName) >= MAX_STR) {
+        warnInfo("´´½¨Ê§°Ü£ºÏîÄ¿Ãû³Æ³¤¶È³¬¹ıÏŞÖÆ");
+        return false;
+    }
+
+    // --------------- ¼ì²éÏîÄ¿Ãû³ÆÊÇ·ñÖØ¸´ ---------------
+    setFilterStrFlag(typeName);
+    CourseType* typeList = selectAllForCourseType(filterCourseTypeByName); // »ñÈ¡ËùÓĞ¿Î³ÌÀàĞÍ
+    clearFilterStrFlag();
+    if (typeList != NULL) {
+        warnInfo("´´½¨Ê§°Ü£ºÏîÄ¿Ãû³ÆÒÑ´æÔÚ");
+        freeCourseTypeList(typeList);
+        return false;
+    }
+
+    // --------------- ´´½¨ĞÂµÄ CourseType ¶ÔÏó ---------------
+    CourseType newType;
+    memset(&newType, 0, sizeof(CourseType));
+    strcpy(newType.name, typeName);
+    newType.status = FILE_STATUS_EXIST;
+
+    // --------------- ²åÈëÊı¾İ ---------------
+    if (insertForCourseType(&newType)) {
         return true;
     }
     else {
-        puts("ç®¡ç†å‘˜æ³¨å†Œå¤±è´¥");
+        errorInfo("´´½¨Ê§°Ü£ºÊı¾İĞ´Èë´íÎó");
         return false;
     }
+}
+
+/**
+ * ĞŞ¸ÄÄ³¸öÏîÄ¿Ãû³Æ
+ * @param id ÏîÄ¿±àºÅ
+ * @param typeName ĞŞ¸ÄºóµÄÃû³Æ
+ */
+bool updateCourseType(int id, char* typeName) {
+    if (typeName == NULL || strlen(typeName) == 0) {
+        warnInfo("ĞŞ¸ÄÏîÄ¿Ãû³ÆÊ§°Ü£ºÃû³ÆÎª¿Õ");
+        return false;
+    }
+    if (strlen(typeName) >= MAX_STR) {
+        warnInfo("ĞŞ¸ÄÏîÄ¿Ãû³ÆÊ§°Ü£ºÃû³Æ¹ı³¤");
+        return false;
+    }
+
+    // ¼ì²éĞÂÃû³ÆÊÇ·ñÒÑ´æÔÚ
+    setFilterStrFlag(typeName);
+    CourseType* existingTypes = selectAllForCourseType(filterCourseTypeByName);
+    clearFilterStrFlag();
+    if (existingTypes != NULL && existingTypes->id != id) {
+        warnInfo("ĞŞ¸ÄÏîÄ¿Ãû³ÆÊ§°Ü£ºÃû³ÆÒÑ´æÔÚ");
+        freeCourseTypeList(existingTypes); // ÊÍ·ÅÁ´±íÄÚ´æ
+        return false;
+    }
+
+    // ¸ù¾İID²éÕÒÏîÄ¿ÀàĞÍ
+    CourseType* targetType = selectByIdForCourseType(id);
+    if (targetType == NULL) {
+        warnInfo("ĞŞ¸ÄÏîÄ¿Ãû³ÆÊ§°Ü£ºÏîÄ¿²»´æÔÚ");
+        return false;
+    }
+
+    // ¸üĞÂÏîÄ¿Ãû³Æ
+    strcpy(targetType->name, typeName);
+
+    // ¸üĞÂÊı¾İµ½ÎÄ¼ş
+    if (!updateByIdForCourseType(targetType, id)) {
+        errorInfo("ĞŞ¸ÄÏîÄ¿Ãû³ÆÊ§°Ü£ºÊı¾İ¸üĞÂÊ§°Ü");
+        freeCourseTypeList(targetType);
+        return false;
+    }
+
+    freeCourseTypeList(targetType); // ÊÍ·Å selectByIdForCourseType ·µ»ØµÄÄÚ´æ
+    return true;
+}
+
+/**
+ * É¾³ıÏîÄ¿
+ * @param id ÏîÄ¿ID
+ */
+bool deleteCourseType(int id) {
+    // ¼ì²éÏîÄ¿ÀàĞÍÊÇ·ñ´æÔÚ
+    CourseType* targetType = selectByIdForCourseType(id);
+    if (targetType == NULL) {
+        warnInfo("É¾³ıÏîÄ¿ÀàĞÍÊ§°Ü£ºÏîÄ¿²»´æÔÚ");
+        return false;
+    }
+
+    // ¼ì²éÊÇ·ñÓĞ¿Î³ÌÒÀÀµ¸ÃÏîÄ¿ÀàĞÍ
+    setFilterIntFlag(id);
+    Course* courses = selectAllForCourse(filterCourseByCourseTypeId);
+    if (courses != NULL) {
+        warnInfo("É¾³ıÏîÄ¿ÀàĞÍÊ§°Ü£ºÓĞ¿Î³ÌÒÀÀµ¸ÃÏîÄ¿ÀàĞÍ");
+        freeCourseList(courses); // ÊÍ·ÅÁ´±íÄÚ´æ
+        free(targetType);        // ÊÍ·Å selectByIdForCourseType ·µ»ØµÄÄÚ´æ
+        return false;
+    }
+    freeCourseList(courses); // ÊÍ·ÅÁ´±íÄÚ´æ
+
+    // ¼ì²éÊÇ·ñÓĞ½ÌÁ·ÉÃ³¤¸ÃÏîÄ¿ÀàĞÍ
+    CoachTypeRel* coachTypeRels = selectAllForCoachTypeRel(filterCoachTypeRelByCourseTypeId);
+    if (coachTypeRels == NULL) {
+        warnInfo("É¾³ıÏîÄ¿ÀàĞÍÊ§°Ü£ºÓĞ½ÌÁ·ÉÃ³¤¸ÃÏîÄ¿ÀàĞÍ");
+        freeCoachTypeRelList(coachTypeRels); // ÊÍ·ÅÁ´±íÄÚ´æ
+        free(targetType);                   // ÊÍ·Å selectByIdForCourseType ·µ»ØµÄÄÚ´æ
+        return false;
+    }
+    freeCoachTypeRelList(coachTypeRels); // ÊÍ·ÅÁ´±íÄÚ´æ
+    clearFilterIntFlag();
+
+    // É¾³ıÏîÄ¿ÀàĞÍ
+    if (!deleteByIdForCourseType(id)) {
+        errorInfo("É¾³ıÏîÄ¿ÀàĞÍÊ§°Ü£ºÊı¾İ¸üĞÂÊ§°Ü");
+        freeCourseTypeList(targetType);
+        return false;
+    }
+
+    freeCourseTypeList(targetType); // ÊÍ·Å selectByIdForCourseType ·µ»ØµÄÄÚ´æ
+    return true;
+}
+
+/**
+ * ´´½¨ĞÂµÄ½ÌÁ·ÕË»§
+ * @param coachName ½ÌÁ·ĞÕÃû
+ * @param coachPassword ½ÌÁ·ÃÜÂë
+ */
+bool createCoach(char* coachName, char* coachPassword) {
+    if (coachName == NULL || coachPassword == NULL || strlen(coachName) == 0 || strlen(coachPassword) == 0) {
+        warnInfo("´´½¨½ÌÁ·ÕË»§Ê§°Ü£ºĞÕÃû»òÃÜÂëÎª¿Õ");
+        return false;
+    }
+
+    if (strlen(coachName) >= MAX_STR || strlen(coachPassword) >= MAX_STR) {
+        warnInfo("´´½¨½ÌÁ·ÕË»§Ê§°Ü£ºĞÕÃû»òÃÜÂë¹ı³¤");
+        return false;
+    }
+
+    // ¼ì²é½ÌÁ·ĞÕÃûÊÇ·ñÒÑ´æÔÚ
+    setFilterStrFlag(coachName);
+    Coach* existingCoaches = selectAllForCoach(filterCoachByName);
+    clearFilterStrFlag();
+    if (existingCoaches != NULL) {
+        warnInfo("´´½¨½ÌÁ·ÕË»§Ê§°Ü£ºĞÕÃûÒÑ´æÔÚ");
+        freeCoachList(existingCoaches); // ÊÍ·ÅÁ´±íÄÚ´æ
+        return false;
+    }
+
+    // ´´½¨ĞÂµÄ½ÌÁ·¶ÔÏó
+    Coach newCoach;
+    memset(&newCoach, 0, sizeof(Coach));
+    strcpy(newCoach.name, coachName);
+    char* encryptPassword = generateEncryptPassword(coachPassword);
+    strcpy(newCoach.password, encryptPassword);
+    free(encryptPassword);
+    newCoach.level = COACH_LEVEL_ONE_STAR; // Ä¬ÈÏĞÇ¼¶ÎªÒ»ĞÇ¼¶
+    newCoach.expertise_status = COACH_STATUS_WAIT_FOR_CHECK; // Ä¬ÈÏÉóºË×´Ì¬Îª´ıÉóºË
+    newCoach.status = FILE_STATUS_EXIST; // Êı¾İ×´Ì¬Îª´æÔÚ
+
+    // ²åÈëÊı¾İµ½ÎÄ¼ş
+    if (!insertForCoach(&newCoach)) {
+        errorInfo("´´½¨½ÌÁ·ÕË»§Ê§°Ü£ºÊı¾İĞ´ÈëÊ§°Ü");
+        return false;
+    }
+    return true;
+}
+
+/**
+ * ĞŞ¸Ä½ÌÁ·ĞÅÏ¢£¨Èç¹ûÎªNULLµÄÏîÔò²»ĞŞ¸Ä£©
+ * @param id ½ÌÁ·ID
+ * @param newCoachName ½ÌÁ·ĞÕÃû
+ * @param newCoachPassword  ½ÌÁ·ÃÜÂë
+ * @param newLevel  ½ÌÁ·ÆÀ¼¶£¨Îª-1Ôò²»ĞŞ¸Ä£©
+ */
+bool updateCoach(int id, char* newCoachName, char* newCoachPassword, CoachLevel newLevel) {
+    // ¼ì²é½ÌÁ·ÊÇ·ñ´æÔÚ
+    Coach* targetCoach = selectByIdForCoach(id);
+    if (targetCoach == NULL) {
+        warnInfo("ĞŞ¸Ä½ÌÁ·ĞÅÏ¢Ê§°Ü£º½ÌÁ·²»´æÔÚ");
+        return false;
+    }
+
+    // ¼ì²éĞÂĞÕÃûÊÇ·ñÒÑ´æÔÚ£¨Èç¹ûÌá¹©ÁËĞÂĞÕÃû£©
+    if (newCoachName != NULL && strlen(newCoachName) > 0) {
+        if (strlen(newCoachName) >= MAX_STR) {
+            warnInfo("ĞŞ¸Ä½ÌÁ·ĞÅÏ¢Ê§°Ü£ºĞÕÃû¹ı³¤");
+            free(targetCoach); // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+            return false;
+        }
+
+        setFilterStrFlag(newCoachName);
+        Coach* existingCoaches = selectAllForCoach(filterCoachByName);
+        clearFilterStrFlag();
+        if (existingCoaches != NULL && existingCoaches->id != id) {
+            warnInfo("ĞŞ¸Ä½ÌÁ·ĞÅÏ¢Ê§°Ü£ºĞÕÃûÒÑ´æÔÚ");
+            freeCoachList(existingCoaches); // ÊÍ·ÅÁ´±íÄÚ´æ
+            free(targetCoach);             // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+            return false;
+        }
+    }
+
+    // ´´½¨ĞÂµÄ½ÌÁ·¶ÔÏóÓÃÓÚ¸üĞÂ
+    Coach updatedCoach;
+    memcpy(&updatedCoach, targetCoach, sizeof(Coach)); // ¸´ÖÆÔ­Êı¾İ
+
+    // ¸üĞÂĞÕÃû£¨Èç¹ûÌá¹©ÁËĞÂĞÕÃû£©
+    if (newCoachName != NULL && strlen(newCoachName) > 0) {
+        strcpy(updatedCoach.name, newCoachName);
+    }
+
+    // ¸üĞÂÃÜÂë£¨Èç¹ûÌá¹©ÁËĞÂÃÜÂë£©
+    if (newCoachPassword != NULL && strlen(newCoachPassword) > 0) {
+        if (strlen(newCoachPassword) >= MAX_STR) {
+            warnInfo("ĞŞ¸Ä½ÌÁ·ĞÅÏ¢Ê§°Ü£ºÃÜÂë¹ı³¤");
+            free(targetCoach); // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+            return false;
+        }
+        char* encryptPassword = generateEncryptPassword(newCoachPassword);
+        strcpy(updatedCoach.password, encryptPassword);
+        free(encryptPassword);
+    }
+
+    // ¸üĞÂĞÇ¼¶£¨Èç¹ûÌá¹©ÁËĞÂĞÇ¼¶£©
+    if (newLevel != -1) {
+        updatedCoach.level = newLevel;
+    }
+
+    // ¸üĞÂÊı¾İµ½ÎÄ¼ş
+    if (!updateByIdForCoach(&updatedCoach, id)) {
+        errorInfo("ĞŞ¸Ä½ÌÁ·ĞÅÏ¢Ê§°Ü£ºÊı¾İ¸üĞÂÊ§°Ü");
+        free(targetCoach);
+        return false;
+    }
+
+    free(targetCoach); // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+    return true;
+}
+
+/**
+ * É¾³ı½ÌÁ·ĞÅÏ¢
+ * @param id ½ÌÁ·ID
+ */
+bool deleteCoach(int id) {
+    // ¼ì²é½ÌÁ·ÊÇ·ñ´æÔÚ
+    Coach* targetCoach = selectByIdForCoach(id);
+    if (targetCoach == NULL) {
+        warnInfo("É¾³ı½ÌÁ·Ê§°Ü£º½ÌÁ·²»´æÔÚ");
+        return false;
+    }
+
+    // ¼ì²éÊÇ·ñÓĞ¿Î³ÌÒÀÀµ¸Ã½ÌÁ·
+    setFilterIntFlag(id);
+    CoachCourseRel* coachCourseRels = selectAllForCoachCourseRel(filterCoachCourseRelByCoachId);
+    clearFilterIntFlag();
+    if (coachCourseRels != NULL) {
+        warnInfo("É¾³ı½ÌÁ·Ê§°Ü£ºÓĞ¿Î³ÌÒÀÀµ¸Ã½ÌÁ·");
+        freeCoachCourseRelList(coachCourseRels); // ÊÍ·ÅÁ´±íÄÚ´æ
+        free(targetCoach);                      // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+        return false;
+    }
+
+    // ¼ì²éÊÇ·ñÓĞÏîÄ¿ÀàĞÍÒÀÀµ¸Ã½ÌÁ·
+    setFilterIntFlag(id);
+    CoachTypeRel* coachTypeRels = selectAllForCoachTypeRel(filterCoachTypeRelByCoachId);
+    clearFilterIntFlag();
+    if (coachTypeRels != NULL) {
+        warnInfo("É¾³ı½ÌÁ·Ê§°Ü£ºÓĞÏîÄ¿ÀàĞÍÒÀÀµ¸Ã½ÌÁ·");
+        freeCoachTypeRelList(coachTypeRels); // ÊÍ·ÅÁ´±íÄÚ´æ
+        free(targetCoach);                  // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+        return false;
+    }
+
+    // Âß¼­É¾³ı½ÌÁ·
+    if (!deleteByIdForCoach(id)) {
+        errorInfo("É¾³ı½ÌÁ·Ê§°Ü£ºÊı¾İ¸üĞÂÊ§°Ü");
+        free(targetCoach);
+        return false;
+    }
+
+    free(targetCoach); // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+    return true;
+}
+
+// ¡ª¡ª¡ª¡ª¡ªĞÅÏ¢¹ÜÀí£ºÔö¼Ó£¬ĞŞ¸Ä£¬É¾³ı
+
+// ½ÌÁ·¹ÜÀí
+
+// ²é¿´ËùÓĞ½ÌÁ·ĞÅÏ¢
+bool showAllCoachInfo() {
+    Coach* coaches = selectAllForCoach(NULL);
+    if (coaches == NULL) {
+        warnInfo("Ã»ÓĞ½ÌÁ·ĞÅÏ¢");
+        return true;
+    }
+    printLinkForCoachDetails(coaches);
+    freeCoachList(coaches);
+    return true;
+}
+
+// ²é¿´ËùÓĞ¿Î³ÌÀà±ğĞÅÏ¢
+bool showAllCourseTypeInfo() {
+    CourseType* courseTypes = selectAllForCourseType(NULL);
+    if (courseTypes == NULL) {
+        warnInfo("Ã»ÓĞ¿Î³ÌÀà±ğĞÅÏ¢");
+        return true;
+    }
+    printLinkForCourseType(courseTypes);
+    freeCourseTypeList(courseTypes);
+    return true;
+}
+
+/**
+ * ²é¿´½ÌÁ·Ìá½»µÄ×Ô¼ºÉÃ³¤Ö¸µ¼µÄÏîÄ¿ÀàĞÍÉêÇë
+ */
+bool showNeedJudgeCoachInfo() {
+    // »ñÈ¡ËùÓĞ½ÌÁ·
+    setFilterIntFlag(COACH_STATUS_WAIT_FOR_CHECK);
+    Coach* coaches = selectAllForCoach(filterCoachByExpertiseStatus);
+    clearFilterIntFlag();
+    if (coaches == NULL) {
+        warnInfo("Ã»ÓĞĞèÒªÉóºËµÄ½ÌÁ·ÉêÇë");
+        return true;
+    }
+
+    // ±éÀú½ÌÁ·Á´±í
+    printLinkForCoachDetails(coaches);
+    // ÊÍ·Å½ÌÁ·Á´±íÄÚ´æ
+    freeCoachList(coaches);
+    return true;
+}
+
+/**
+ * ÉóºË½ÌÁ·ĞÅÏ¢µÄ½á¹û
+ * @param id ½ÌÁ·ID
+ * @param status ½ÌÁ·ĞÅÏ¢
+ */
+bool markJudgeCoachInfoStatus(int id, CoachStatus status) {
+    // ¼ì²é½ÌÁ·ÊÇ·ñ´æÔÚ
+    Coach* targetCoach = selectByIdForCoach(id);
+    if (targetCoach == NULL) {
+        warnInfo("ÉóºË½ÌÁ·ĞÅÏ¢Ê§°Ü£º½ÌÁ·²»´æÔÚ");
+        return false;
+    }
+
+    // ¸üĞÂÉóºË×´Ì¬
+    targetCoach->expertise_status = status;
+
+    // ¸üĞÂÊı¾İµ½ÎÄ¼ş
+    if (!updateByIdForCoach(targetCoach, id)) {
+        errorInfo("ÉóºË½ÌÁ·ĞÅÏ¢Ê§°Ü£ºÊı¾İ¸üĞÂÊ§°Ü");
+        free(targetCoach);
+        return false;
+    }
+    else {
+        const char* statusStr[] = { "´ıÉóºË", "Í¨¹ı", "Î´Í¨¹ı" };
+        printf("½ÌÁ·ĞÅÏ¢ÉóºË³É¹¦£¡×´Ì¬£º%s\n", statusStr[status]);
+    }
+
+    free(targetCoach); // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+    return true;
+}
+
+// ½ÌÁ·¹ÜÀí
+
+// ¿Î³Ì¹ÜÀí
+
+/**
+ * ´´½¨Ò»¸öĞÂµÄ¿Î³Ì
+ * @param courseName ¿Î³ÌÃû³Æ
+ * @param courseType ¿Î³ÌÀà±ğ
+ * @param time Ê±¼ä
+ * @param location µØµã
+ * @param stuMax ×î´óÑ§ÉúÊıÁ¿
+ * @param price ¼Û¸ñ
+ */
+bool createCourse(char* courseName, int courseType, int time, char* location, int stuMax, double price) {
+    // ²ÎÊıĞ£Ñé
+    if (courseName == NULL || location == NULL || strlen(courseName) == 0 || strlen(location) == 0) {
+        warnInfo("´´½¨¿Î³ÌÊ§°Ü£º¿Î³ÌÃû³Æ»òµØµãÎª¿Õ");
+        return false;
+    }
+
+    if (time < 0) {
+        warnInfo("´´½¨¿Î³ÌÊ§°Ü£ºÊ±¼äÓ¦Îª·Ç¸ºÊı");
+        return false;
+    }
+
+    if (strlen(courseName) >= MAX_STR || strlen(location) >= MAX_STR) {
+        errorInfo("´´½¨¿Î³ÌÊ§°Ü£º¿Î³ÌÃû³Æ»òµØµã¹ı³¤");
+        return false;
+    }
+
+    if (stuMax <= 0) {
+        errorInfo("´´½¨¿Î³ÌÊ§°Ü£º×î´óÑ§ÉúÊıÁ¿±ØĞë´óÓÚ0");
+        return false;
+    }
+
+    if (price < 0) {
+        errorInfo("´´½¨¿Î³ÌÊ§°Ü£º¼Û¸ñ²»ÄÜÎª¸ºÊı");
+        return false;
+    }
+
+    // ¼ì²é¿Î³ÌÀà±ğÊÇ·ñ´æÔÚ
+    CourseType* targetCourseType = selectByIdForCourseType(courseType);
+    if (targetCourseType == NULL || targetCourseType->status != FILE_STATUS_EXIST) {
+        errorInfo("´´½¨¿Î³ÌÊ§°Ü£º¿Î³ÌÀà±ğ²»´æÔÚ");
+        return false;
+    }
+    free(targetCourseType); // ÊÍ·Å selectByIdForCourseType ·µ»ØµÄÄÚ´æ
+
+    // ´´½¨ĞÂµÄ¿Î³Ì¶ÔÏó
+    Course newCourse;
+    memset(&newCourse, 0, sizeof(Course));
+    strcpy(newCourse.name, courseName);
+    newCourse.type_id = courseType;
+    newCourse.time = time;
+    strcpy(newCourse.location, location);
+    newCourse.student_max = stuMax;
+    newCourse.student_count = 0; // ³õÊ¼Ñ§ÉúÊıÁ¿Îª0
+    newCourse.price = price;
+    newCourse.status = FILE_STATUS_EXIST; // Êı¾İ×´Ì¬Îª´æÔÚ
+
+    // ²åÈëÊı¾İµ½ÎÄ¼ş
+    if (!insertForCourse(&newCourse)) {
+        errorInfo("´´½¨¿Î³ÌÊ§°Ü£ºÊı¾İĞ´ÈëÊ§°Ü");
+        return false;
+    }
+    return true;
+}
+
+/**
+ * ĞŞ¸Ä¿Î³ÌĞÅÏ¢
+ * @param id ¿Î³ÌID
+ * @param courseName ¿Î³ÌÃû³Æ
+ * @param courseType ¿Î³ÌÀà±ğ
+ * @param time Ê±¼ä
+ * @param location µØµã
+ * @param stuMax ×î´óÑ§ÉúÊıÁ¿
+ * @param price ¼Û¸ñ
+ */
+bool updateCourse(int id, char* courseName, int courseType, int time, char* location, int stuMax, double price) {
+    // ²ÎÊıĞ£Ñé
+    if (courseName == NULL || location == NULL || strlen(courseName) == 0 || strlen(location) == 0) {
+        warnInfo("´´½¨¿Î³ÌÊ§°Ü£º¿Î³ÌÃû³Æ»òµØµãÎª¿Õ");
+        return false;
+    }
+
+    if (time < 0) {
+        warnInfo("´´½¨¿Î³ÌÊ§°Ü£ºÊ±¼äÓ¦Îª·Ç¸ºÊı");
+        return false;
+    }
+
+    if (strlen(courseName) >= MAX_STR || strlen(location) >= MAX_STR) {
+        errorInfo("´´½¨¿Î³ÌÊ§°Ü£º¿Î³ÌÃû³Æ»òµØµã¹ı³¤");
+        return;
+    }
+
+    if (stuMax <= 0) {
+        errorInfo("´´½¨¿Î³ÌÊ§°Ü£º×î´óÑ§ÉúÊıÁ¿±ØĞë´óÓÚ0");
+        return false;
+    }
+
+    if (price < 0) {
+        errorInfo("´´½¨¿Î³ÌÊ§°Ü£º¼Û¸ñ²»ÄÜÎª¸ºÊı");
+        return false;
+    }
+    
+    // ¼ì²é¿Î³ÌÊÇ·ñ´æÔÚ
+    Course* targetCourse = selectByIdForCourse(id);
+    if (targetCourse == NULL) {
+        warnInfo("ĞŞ¸Ä¿Î³ÌĞÅÏ¢Ê§°Ü£º¿Î³Ì²»´æÔÚ");
+        return false;
+    }
+
+    // ¼ì²é¿Î³ÌÀà±ğÊÇ·ñ´æÔÚ
+    if (courseType != -1) {
+        CourseType* type = selectByIdForCourseType(courseType);
+        if (type == NULL || type->status != FILE_STATUS_EXIST) {
+            warnInfo("ĞŞ¸Ä¿Î³ÌĞÅÏ¢Ê§°Ü£º¿Î³ÌÀà±ğ²»´æÔÚ");
+            free(targetCourse); // ÊÍ·Å selectByIdForCourse ·µ»ØµÄÄÚ´æ
+            return false;
+        }
+        free(type); // ÊÍ·Å selectByIdForCourseType ·µ»ØµÄÄÚ´æ
+    }
+
+    // ´´½¨ĞÂµÄ¿Î³Ì¶ÔÏóÓÃÓÚ¸üĞÂ
+    Course updatedCourse;
+    memcpy(&updatedCourse, targetCourse, sizeof(Course)); // ¸´ÖÆÔ­Êı¾İ
+
+    // ¸üĞÂ¿Î³ÌÃû³Æ£¨Èç¹ûÌá¹©ÁËĞÂÃû³Æ£©
+    if (courseName != NULL && strlen(courseName) > 0) {
+        if (strlen(courseName) >= MAX_STR) {
+            warnInfo("ĞŞ¸Ä¿Î³ÌĞÅÏ¢Ê§°Ü£º¿Î³ÌÃû³Æ¹ı³¤");
+            free(targetCourse); // ÊÍ·Å selectByIdForCourse ·µ»ØµÄÄÚ´æ
+            return false;
+        }
+        strcpy(updatedCourse.name, courseName);
+    }
+
+    // ¸üĞÂ¿Î³ÌÀà±ğ£¨Èç¹ûÌá¹©ÁËĞÂÀà±ğ£©
+    if (courseType != -1) {
+        updatedCourse.type_id = courseType;
+    }
+
+    // ¸üĞÂÊ±¼ä£¨Èç¹ûÌá¹©ÁËĞÂÊ±¼ä£©
+    if (time != -1) {
+        updatedCourse.time = time;
+    }
+
+    // ¸üĞÂµØµã£¨Èç¹ûÌá¹©ÁËĞÂµØµã£©
+    if (location != NULL && strlen(location) > 0) {
+        if (strlen(location) >= MAX_STR) {
+            warnInfo("ĞŞ¸Ä¿Î³ÌĞÅÏ¢Ê§°Ü£ºµØµãÃû³Æ¹ı³¤");
+            free(targetCourse); // ÊÍ·Å selectByIdForCourse ·µ»ØµÄÄÚ´æ
+            return false;
+        }
+        strcpy(updatedCourse.location, location);
+    }
+
+    // ¸üĞÂ×î´óÑ§ÉúÊıÁ¿£¨Èç¹ûÌá¹©ÁËĞÂÖµ£©
+    if (stuMax != -1) {
+        if (stuMax < updatedCourse.student_count) {
+            warnInfo("ĞŞ¸Ä¿Î³ÌĞÅÏ¢Ê§°Ü£º×î´óÑ§ÉúÊıÁ¿²»ÄÜĞ¡ÓÚµ±Ç°Ñ§ÉúÊıÁ¿");
+            free(targetCourse); // ÊÍ·Å selectByIdForCourse ·µ»ØµÄÄÚ´æ
+            return false;
+        }
+        updatedCourse.student_max = stuMax;
+    }
+
+    // ¸üĞÂ¼Û¸ñ£¨Èç¹ûÌá¹©ÁËĞÂ¼Û¸ñ£©
+    if (fabs(price + 1) < 1e-8) {
+        updatedCourse.price = price;
+    }
+
+    // ¸üĞÂÊı¾İµ½ÎÄ¼ş
+    if (!updateByIdForCourse(&updatedCourse, id)) {
+        errorInfo("ĞŞ¸Ä¿Î³ÌĞÅÏ¢Ê§°Ü£ºÊı¾İ¸üĞÂÊ§°Ü");
+        free(targetCourse);
+        return false;
+    }
+
+    free(targetCourse); // ÊÍ·Å selectByIdForCourse ·µ»ØµÄÄÚ´æ
+    return true;
+}
+
+// ¿Î³Ì¹ÜÀí
+
+// ·ÖÅÉºÍµ÷Õû½¡Éí¿Î³ÌµÄ½ÌÁ·
+
+/**
+ * Ìí¼Ó½ÌÁ·ºÍ¿Î³Ì¹ØÏµ
+ * @param courseId ¿Î³ÌID
+ * @param coachId ½ÌÁ·ID
+ */
+bool addCoachCourseRel(int courseId, int coachId) {
+    // ¼ì²é¿Î³ÌÊÇ·ñ´æÔÚ
+    Course* course = selectByIdForCourse(courseId);
+    if (course == NULL) {
+        warnInfo("Ìí¼Ó½ÌÁ·¿Î³Ì¹ØÏµÊ§°Ü£º¿Î³Ì²»´æÔÚ");
+        return false;
+    }
+    free(course); // ÊÍ·Å selectByIdForCourse ·µ»ØµÄÄÚ´æ
+
+    // ¼ì²é½ÌÁ·ÊÇ·ñ´æÔÚ
+    Coach* coach = selectByIdForCoach(coachId);
+    if (coach == NULL) {
+        warnInfo("Ìí¼Ó½ÌÁ·¿Î³Ì¹ØÏµÊ§°Ü£º½ÌÁ·²»´æÔÚ");
+        return false;
+    }
+    free(coach); // ÊÍ·Å selectByIdForCoach ·µ»ØµÄÄÚ´æ
+
+    // ¼ì²é¹ØÏµÊÇ·ñÒÑ´æÔÚ
+    setFilterIntFlag(coachId);
+    CoachCourseRel* existingRels = selectAllForCoachCourseRel(filterCoachCourseRelByCoachId);
+    setFilterIntFlag(courseId);
+    existingRels = filterCoachCourseRelByCourseId(existingRels);
+    clearFilterIntFlag();
+    if (existingRels != NULL) {
+        errorInfo("Ìí¼Ó½ÌÁ·¿Î³Ì¹ØÏµÊ§°Ü£º¹ØÏµÒÑ´æÔÚ");
+        freeCoachCourseRelList(existingRels); // ÊÍ·ÅÁ´±íÄÚ´æ
+        return false;
+    }
+
+    // ´´½¨ĞÂµÄ½ÌÁ·¿Î³Ì¹ØÏµ¶ÔÏó
+    CoachCourseRel newRel;
+    memset(&newRel, 0, sizeof(CoachCourseRel));
+    newRel.courseId = courseId;
+    newRel.coachId = coachId;
+    newRel.status = FILE_STATUS_EXIST; // Êı¾İ×´Ì¬Îª´æÔÚ
+
+    // ²åÈëÊı¾İµ½ÎÄ¼ş
+    if (!insertForCoachCourseRel(&newRel)) {
+        errorInfo("Ìí¼Ó½ÌÁ·¿Î³Ì¹ØÏµÊ§°Ü£ºÊı¾İĞ´ÈëÊ§°Ü");
+        return false;
+    }
+    return true;
+}
+
+/**
+ * É¾³ı½ÌÁ·ºÍ¿Î³Ì¹ØÏµ
+ * @param courseId ¿Î³ÌID
+ * @param coachId ½ÌÁ·ID
+ */
+bool deleteCoachCourseRel(int courseId, int coachId) {
+    // »ñÈ¡ËùÓĞ½ÌÁ·¿Î³Ì¹ØÏµ
+    setFilterIntFlag(coachId);
+    CoachCourseRel* existingRels = selectAllForCoachCourseRel(filterCoachCourseRelByCoachId);
+    setFilterIntFlag(courseId);
+    existingRels = filterCoachCourseRelByCourseId(existingRels);
+    clearFilterIntFlag();
+
+    // Èç¹ûÎ´ÕÒµ½Æ¥ÅäµÄ¹ØÏµ
+    if (existingRels == NULL) {
+        errorInfo("É¾³ı½ÌÁ·¿Î³Ì¹ØÏµÊ§°Ü£º¹ØÏµ²»´æÔÚ");
+        freeCoachCourseRelList(existingRels); // ÊÍ·ÅÁ´±íÄÚ´æ
+        return false;
+    }
+
+    int relId = existingRels->id;
+
+    // ÊÍ·ÅÁ´±íÄÚ´æ
+    freeCoachCourseRelList(existingRels);
+
+    // Âß¼­É¾³ı¹ØÏµ
+    if (!deleteByIdForCoachCourseRel(relId)) {
+        errorInfo("É¾³ı½ÌÁ·¿Î³Ì¹ØÏµÊ§°Ü£ºÊı¾İ¸üĞÂÊ§°Ü");
+        return false;
+    }
+    return true;
+}
+
+// ·ÖÅÉºÍµ÷Õû½¡Éí¿Î³ÌµÄ½ÌÁ·
+
+// ĞÅÏ¢²éÑ¯
+
+/**
+ * ´òÓ¡ËùÓĞ¿Î³ÌĞÅÏ¢
+ */
+bool showCourseInfoForAdmin() {
+    // »ñÈ¡ËùÓĞ¿Î³Ì
+    Course* courses = selectAllForCourse(NULL);
+    if (courses == NULL) {
+        puts("Ã»ÓĞ¿Î³ÌĞÅÏ¢");
+        return true;
+    }
+
+    // ´òÓ¡¿Î³ÌĞÅÏ¢
+    puts("¿Î³ÌĞÅÏ¢ÁĞ±í£º\n--------------------------");
+    printLinkForCourse(courses);
+    
+    // ÊÍ·ÅÁ´±íÄÚ´æ
+    freeCourseList(courses);
+    return true;
+}
+
+/**
+ * ²éÑ¯¿Î³ÌĞÅÏ¢£¨null»òÕß-1µÄÏîÄ¿ÔòËµÃ÷²»Ê¹ÓÃÕâ¸öÌõ¼ş£©
+ * @param courseName ¿Î³ÌÃû³Æ
+ * @param courseType ¿Î³ÌÀàĞÍ
+ * @param location ¿Î³ÌµØµã
+ * @param stuMax_low ×î´óÑ§Éú£¨×óÇø¼ä£©
+ * @param stuMax_high ×î´óÑ§Éú£¨ÓÒÇø¼ä£©
+ * @param price_low ¼Û¸ñ£¨×óÇø¼ä£©
+ * @param price_high ¼Û¸ñ£¨ÓÒÇø¼ä£©
+ * @param time_low Ê±¼ä£¨×óÇø¼ä£©
+ * @param time_high Ê±¼ä£¨ÓÒÇø¼ä£©
+ */
+bool searchCourseInfoForAdmin(char* courseName, char* courseType, char* location, int stuMax_low, int stuMax_high, double price_low, double price_high, int time_low, int time_high) {
+    // »ñÈ¡ËùÓĞ¿Î³Ì
+    Course* courses = selectAllForCourse(NULL);
+    if (courses == NULL) {
+        puts("Ã»ÓĞ¿Î³ÌĞÅÏ¢");
+        return true;
+    }
+
+    // ´òÓ¡²éÑ¯½á¹û±êÌâ
+    puts("²éÑ¯½á¹û£º\n--------------------------");
+
+    // ±éÀúÁ´±í£¬É¸Ñ¡·ûºÏÌõ¼şµÄ¿Î³Ì
+    Course* newHeader = NULL;
+    Course* currentNew = NULL;
+    Course* current = courses;
+    while (current != NULL) {
+        // ¼ì²é¿Î³ÌÃû³Æ
+        if (courseName != NULL && strlen(courseName) > 0 && strstr(current->name, courseName) == NULL) {
+            current = current->nextPointer;
+            continue;
+        }
+
+        // ¼ì²é¿Î³ÌÀàĞÍ
+        if (courseType != NULL && strlen(courseType) > 0) {
+            CourseType* type = selectByIdForCourseType(current->type_id);
+            if (type == NULL || strstr(type->name, courseType) == NULL) {
+                current = current->nextPointer;
+                continue;
+            }
+            free(type); // ÊÍ·Å selectByIdForCourseType ·µ»ØµÄÄÚ´æ
+        }
+
+        // ¼ì²éµØµã
+        if (location != NULL && strlen(location) > 0 && strstr(current->location, location) == NULL) {
+            current = current->nextPointer;
+            continue;
+        }
+
+        // ¼ì²é×î´óÑ§ÉúÊıÁ¿·¶Î§
+        if (stuMax_low != -1 && current->student_max < stuMax_low) {
+            current = current->nextPointer;
+            continue;
+        }
+        if (stuMax_high != -1 && current->student_max > stuMax_high) {
+            current = current->nextPointer;
+            continue;
+        }
+
+        // ¼ì²é¼Û¸ñ·¶Î§
+        if (price_low != -1 && current->price < price_low) {
+            current = current->nextPointer;
+            continue;
+        }
+        if (price_high != -1 && current->price > price_high) {
+            current = current->nextPointer;
+            continue;
+        }
+
+        // ¼ì²éÊ±¼ä·¶Î§
+        if (time_low != -1 && current->time < time_low) {
+            current = current->nextPointer;
+            continue;
+        }
+        if (time_high != -1 && current->time > time_high) {
+            current = current->nextPointer;
+            continue;
+        }
+
+        if (newHeader == NULL) {
+            newHeader = (Course*)malloc(sizeof(Course));
+            if (newHeader == NULL) {
+                puts("²Ù×÷ÏµÍ³ÄÚ´æ²»×ã");
+                continue;
+            }
+            memcpy(newHeader, current, sizeof(Course));
+            newHeader->nextPointer = NULL;
+            currentNew = newHeader;
+        } else {
+            currentNew->nextPointer = (Course*)malloc(sizeof(Course));
+            if (currentNew->nextPointer == NULL) {
+                puts("²Ù×÷ÏµÍ³ÄÚ´æ²»×ã");
+                continue;
+            }
+            memcpy(currentNew->nextPointer, current, sizeof(Course));
+            currentNew = currentNew->nextPointer;
+            currentNew->nextPointer = NULL;
+        }
+        current = current->nextPointer;
+    }
+    printLinkForCourse(newHeader);
+    // ÊÍ·ÅÁ´±íÄÚ´æ
+    freeCourseList(courses);
+    freeCourseList(newHeader);
+    return true;
+}
+
+/**
+ * ²é¿´ËùÓĞÑ§Ô±ĞÅÏ¢
+ */
+bool showUserInfoForAdmin() {
+    // »ñÈ¡ËùÓĞÑ§Ô±ĞÅÏ¢
+    User* users = selectAllForUser(NULL);
+    if (users == NULL) {
+        puts("Ã»ÓĞÑ§Ô±ĞÅÏ¢");
+        return true;
+    }
+
+    // ´òÓ¡Ñ§Ô±ĞÅÏ¢
+    puts("Ñ§Ô±ĞÅÏ¢ÁĞ±í£º\n--------------------------");
+    printLinkForUser(users);
+
+    // ÊÍ·ÅÁ´±íÄÚ´æ
+    freeUserList(users);
+    return true;
+}
+
+/**
+ * ²éÑ¯Ä³Ñ§Ô±ĞÅÏ¢
+ * @param userName ÓÃ»§Ãû
+ */
+bool searchUserInfoForAdmin(char* userName) {
+    if (userName == NULL || strlen(userName) == 0) {
+        errorInfo("²éÑ¯Ñ§Ô±ĞÅÏ¢Ê§°Ü£ºÓÃ»§ÃûÎª¿Õ");
+        return false;
+    }
+
+    // »ñÈ¡ËùÓĞÑ§Ô±ĞÅÏ¢
+    setFilterStrFlag(userName);
+    User* users = selectAllForUser(filterUserByNameContains);
+    clearFilterStrFlag();
+    if (users == NULL) {
+        puts("Ã»ÓĞÑ§Ô±ĞÅÏ¢");
+        return true;
+    }
+
+    // ´òÓ¡²éÑ¯½á¹û±êÌâ
+    puts("²éÑ¯½á¹û£º\n--------------------------");
+    printLinkForUser(users);
+    // ÊÍ·ÅÁ´±íÄÚ´æ
+    freeUserList(users);
+    return true;
+}
+
+// ĞÅÏ¢²éÑ¯
+
+// ĞÅÏ¢ÅÅĞò
+
+// ¶¨Òå±È½Ïº¯Êı
+int compareCourseByName(const void* a, const void* b) {
+    return strcmp(((Course*)a)->name, ((Course*)b)->name);
+}
+int compareCourseByTypeId(const void* a, const void* b) {
+    return ((Course*)a)->type_id - ((Course*)b)->type_id;
+}
+int compareCourseByTime(const void* a, const void* b) {
+    return ((Course*)a)->time - ((Course*)b)->time;
+}
+int compareCourseByLocation(const void* a, const void* b) {
+    return strcmp(((Course*)a)->location, ((Course*)b)->location);
+}
+int compareCourseByStuCount(const void* a, const void* b) {
+    return ((Course*)a)->student_count - ((Course*)b)->student_count;
+}
+int compareCourseByStuMax(const void* a, const void* b) {
+    return ((Course*)a)->student_max - ((Course*)b)->student_max;
+}
+int compareCourseByCoachNum(const void* a, const void* b) {
+    // ¼ÆËã½ÌÁ·ÊıÁ¿
+    int countA = 0, countB = 0;
+    CoachCourseRel* rels = selectAllForCoachCourseRel(NULL);
+    for (CoachCourseRel* rel = rels; rel != NULL; rel = rel->nextPointer) {
+        if (rel->courseId == ((Course*)a)->id) countA++;
+        if (rel->courseId == ((Course*)b)->id) countB++;
+    }
+    freeCoachCourseRelList(rels);
+    return (countA - countB);
+}
+int compareCourseByPrice(const void* a, const void* b) {
+    double diff = ((Course*)a)->price - ((Course*)b)->price;
+    return diff > 0 ? 1 : (diff < 0 ? -1 : 0);
+}
+
+// ¶¨Òå±È½Ïº¯ÊıÊı×é
+#define SORT_KEY_COUNT 8
+
+typedef int (*CompareFunc)(const void*, const void*);
+
+const CompareFunc compareFuncs[SORT_KEY_COUNT] = {
+    compareCourseByName,     // SORT_BY_NAME
+    compareCourseByTypeId,   // SORT_BY_TYPE_ID
+    compareCourseByTime,     // SORT_BY_TIME
+    compareCourseByLocation, // SORT_BY_LOCATION
+    compareCourseByStuCount, // SORT_BY_STU_COUNT
+    compareCourseByStuMax,   // SORT_BY_STU_MAX
+    compareCourseByCoachNum, // SORT_BY_COACH_NUM
+    compareCourseByPrice     // SORT_BY_PRICE
+};
+
+// ¶¨Òå×ÛºÏ±È½Ïº¯Êı
+int compareCourse(const Course* a, const Course* b, const int context[SORT_KEY_COUNT]) {
+    CompareFunc compares[SORT_KEY_COUNT];
+    int order[SORT_KEY_COUNT];
+    memset(order, 0, sizeof(order));
+    memset(compares, 0, sizeof(compares));
+    int tot = 0;
+    for (int i = 1; i <= SORT_KEY_COUNT; i++) {
+        for (int j = 0; j < SORT_KEY_COUNT; j++) {
+            if (abs(context[j]) == i) {
+                order[tot] = context[j] > 0 ? 1 : -1;
+                compares[tot] = compareFuncs[j];
+                tot++;
+            }
+        }
+    }
+    for (int i = 0; i < tot; i++) {
+        int result = compares[i](a, b) * order[i];
+        if (result != 0) return result > 0 ? 1 : -1;
+    }
+    return 0;
+}
+
+Course* sortCourseInfo(Course* courses, int byName, int byTypeId, int byTime, int byLocation, int byStuCount, int byStuMax, int byCoachNum, int byPrice) {
+    if (courses == NULL) {
+        puts("Ã»ÓĞ¿Î³ÌĞÅÏ¢");
+        return NULL;
+    }
+    int context[SORT_KEY_COUNT];
+    context[0] = byName;
+    context[1] = byTypeId;
+    context[2] = byTime;
+    context[3] = byLocation;
+    context[4] = byStuCount;
+    context[5] = byStuMax;
+    context[6] = byCoachNum;
+    context[7] = byPrice;
+    Course* sortHeader = NULL;
+    Course* sortCurrent = NULL;
+    // Ê¹ÓÃÑ¡ÔñÅÅĞò½øĞĞÅÅĞò
+    while (1) {
+        Course* first = NULL;
+        Course* orgCurrent = courses;
+        while (orgCurrent != NULL) {
+            if (orgCurrent->status == FILE_STATUS_EXIST) {
+                first = orgCurrent;
+                orgCurrent = orgCurrent->nextPointer;
+                break;
+            }
+            orgCurrent = orgCurrent->nextPointer;
+        }
+        if (first == NULL) {
+            break;
+        }
+        while (orgCurrent != NULL) {
+            if (compareCourse(orgCurrent, first, context) < 0 && orgCurrent->status == FILE_STATUS_EXIST) {
+                first = orgCurrent;
+            }
+            orgCurrent = orgCurrent->nextPointer;
+        }
+        if (sortHeader == NULL) {
+            sortHeader = (Course*)malloc(sizeof(Course));
+            if (sortHeader == NULL) {
+                puts("²Ù×÷ÏµÍ³ÄÚ´æ²»×ã");
+                return NULL;
+            }
+            memcpy(sortHeader, first, sizeof(Course));
+            sortHeader->nextPointer = NULL;
+            sortCurrent = sortHeader;
+            first->status = FILE_STATUS_DELETE;
+        }
+        else {
+            sortCurrent->nextPointer = (Course*)malloc(sizeof(Course));
+            if (sortCurrent->nextPointer == NULL) {
+                puts("²Ù×÷ÏµÍ³ÄÚ´æ²»×ã");
+                return NULL;
+            }
+            memcpy(sortCurrent->nextPointer, first, sizeof(Course));
+            sortCurrent = sortCurrent->nextPointer;
+            sortCurrent->nextPointer = NULL;
+            first->status = FILE_STATUS_DELETE;
+        }
+    }
+    return sortHeader;
+}
+
+/**
+ * ¶Ô¿Î³ÌĞÅÏ¢½øĞĞÅÅĞò
+ * Ã¿¸ö¹Ø¼ü×ÖµÄÖµÎªÕıÊıÊ±ÔòËµÃ÷ÎªÉıĞòÅÅĞò£¬Îª¸ºÊıÊ±ÔòÎª½µĞòÅÅĞò
+ * Èç¹û¹Ø¼ü×ÖµÄÖµÎª0Ôò²»²ÎÓëÅÅĞò£¬¹Ø¼ü×ÖµÄ¾ø¶ÔÖµÔ½Ğ¡£¬ÔòËµÃ÷ÓÅÏÈ¶ÈÔ½¸ß
+ * Á½¸öÖµ·ÇÁãµÄ¹Ø¼ü×ÖµÄ¾ø¶ÔÖµ²»Ó¦¸ÃÏàÍ¬
+ * @param byName   °´Ãû³Æ
+ * @param byTypeId °´ÀàĞÍID
+ * @param byTime °´Ê±¼ä
+ * @param byLocation °´µØµã
+ * @param byStuCount °´ËùÑ¡Ñ§ÉúÊıÁ¿
+ * @param byStuMax °´×î´óÑ§ÉúÊıÁ¿
+ * @param byCoachNum °´½ÌÁ·ÊıÁ¿
+ * @param byPrice °´¼Û¸ñ
+ */
+bool sortCourseInfoForAdmin(int byName, int byTypeId, int byTime, int byLocation, int byStuCount, int byStuMax, int byCoachNum, int byPrice) {
+    // »ñÈ¡ËùÓĞ¿Î³Ì
+    Course* courses = selectAllForCourse(NULL);
+    Course* sortHeader = sortCourseInfo(courses, byName, byTypeId, byTime, byLocation, byStuCount, byStuMax, byCoachNum, byPrice);
+
+    // ´òÓ¡ÅÅĞò½á¹û
+    printLinkForCourse(sortHeader);
+    freeCourseList(sortHeader);
+    freeCourseList(courses);
+    return true;
+}
+
+/**
+ * »ñÈ¡Ñ§Ô±µÄÑ¡¿ÎÊıÁ¿
+ * @param userId Ñ§Ô±ID
+ * @return Ñ¡¿ÎÊıÁ¿
+ */
+int getUserCourseCount(int userId) {
+    int count = 0;
+    setFilterIntFlag(userId);
+    UserCourseRel* rels = selectAllForUserCourseRel(filterUserCourseRelByUserId);
+    clearFilterIntFlag();
+    UserCourseRel* current = rels;
+    while (current != NULL) {
+        count++;
+        current = current->nextPointer;
+    }
+    freeUserCourseRelList(rels);
+    return count;
+}
+
+/**
+ * ±È½Ïº¯Êı£¨°´Ãû³ÆºÍÑ¡¿ÎÊıÁ¿ÅÅĞò£©
+ */
+int compareUser(const User* a, const User* b, int byName, int bySelect) {
+    int select1 = getUserCourseCount(a->id);
+    int select2 = getUserCourseCount(b->id);
+    int dif = select1 - select2;
+    int res = strcmp(a->name, b->name);
+    if (abs(byName) > abs(bySelect)) {
+        if (res == 0) {
+            if (dif == 0) return 0;
+            else return dif > 0 ? 1 : -1;
+        }
+        return res > 0 ? 1 : -1;
+    } else if (abs(byName) < abs(bySelect)) {
+        if (dif == 0) {
+            if (res == 0) return 0;
+            else return res > 0 ? 1 : -1;
+        }
+        return dif > 0 ? 1 : -1;
+    } 
+    return 0;
+}
+
+User* sortUserInfo(User* users, int byName, int bySelectCourse) {
+    if (users == NULL) {
+        puts("Ã»ÓĞÑ§Ô±ĞÅÏ¢");
+        return NULL;
+    }
+    User* sortHeader = NULL;
+    User* sortCurrent = NULL;
+    while (1) {
+        User* first = NULL;
+        User* header = users;
+        while (header != NULL) {
+            if (header->status == FILE_STATUS_EXIST) {
+                first = header;
+                header = header->nextPointer;
+                break;
+            }
+            header = header->nextPointer;
+        }
+        if (first == NULL) {
+            break;
+        }
+        while (header != NULL) {
+            if (header->status == FILE_STATUS_EXIST && compareUser(header, first, byName, bySelectCourse) < 0) {
+                first = header;
+            }
+            header = header->nextPointer;
+        }
+        if (sortHeader == NULL) {
+            sortHeader = (User*)malloc(sizeof(User));
+            if (sortHeader == NULL) {
+                puts("²Ù×÷ÏµÍ³ÄÚ´æ²»×ã");
+                return NULL;
+            }
+            memcpy(sortHeader, first, sizeof(User));
+            sortHeader->nextPointer = NULL;
+            sortCurrent = sortHeader;
+            first->status = FILE_STATUS_DELETE;
+        }
+        else {
+            sortCurrent->nextPointer = (User*)malloc(sizeof(User));
+            if (sortCurrent->nextPointer == NULL) {
+                puts("²Ù×÷ÏµÍ³ÄÚ´æ²»×ã");
+                return NULL;
+            }
+            memcpy(sortCurrent->nextPointer, first, sizeof(User));
+            sortCurrent = sortCurrent->nextPointer;
+            sortCurrent->nextPointer = NULL;
+            first->status = FILE_STATUS_DELETE;
+        }
+    }
+    return sortHeader;
+}
+
+/**
+ * ÅÅĞòÑ§Ô±ĞÅÏ¢
+ * @param byName °´Ãû³Æ£¨ÕıÊıÉıĞò£¬¸ºÊı½µĞò£¬0²»²ÎÓë£©
+ * @param bySelectCourse °´ËùÑ¡¿Î³ÌÊıÁ¿£¨ÕıÊıÉıĞò£¬¸ºÊı½µĞò£¬0²»²ÎÓë£©
+ */
+bool sortUserInfoForAdmin(int byName, int bySelectCourse) {
+    // »ñÈ¡ËùÓĞÑ§Ô±ĞÅÏ¢
+    User* users = selectAllForUser(NULL);
+    User* sortHeader = sortUserInfo(users, byName, bySelectCourse);
+
+    // ´òÓ¡ÓÃ»§ĞÅÏ¢
+    printLinkForUser(sortHeader);
+    freeUserList(sortHeader);
+    freeUserList(users);
+    return true;
+}
+
+// ĞÅÏ¢ÅÅĞò
+
+// ĞÅÏ¢Í³¼Æ
+/**
+ * ´òÓ¡ËùÓĞÀàĞÍ¿Î³ÌµÄÑ§Ô±ÊıÁ¿
+ */
+bool countCourseTypeSelectedForAdmin() {
+    // »ñÈ¡ËùÓĞ¿Î³ÌÀàĞÍ
+    CourseType* courseTypes = selectAllForCourseType(NULL);
+    if (courseTypes == NULL) {
+        puts("Ã»ÓĞ¿Î³ÌÀàĞÍĞÅÏ¢");
+        return true;
+    }
+
+    // ±éÀúÁĞ±í
+    CourseType* header = courseTypes;
+    while (header != NULL) {
+        countCourseTypeSelectedByIdForAdmin(header->id);
+        header = header->nextPointer;
+    }
+
+    // ÊÍ·ÅÄÚ´æ
+    freeCourseTypeList(courseTypes);
+    return true;
+}
+
+/**
+ * ´òÓ¡Ä³¸öÀàĞÍ¿Î³ÌµÄÑ§Ô±ÊıÁ¿
+ * @param courseTypeId ¿Î³ÌÀàĞÍID
+ */
+bool countCourseTypeSelectedByIdForAdmin(int courseTypeId) {
+    // »ñÈ¡ËùÓĞ¿Î³Ì
+    setFilterIntFlag(courseTypeId);
+    Course* courses = selectAllForCourse(filterCourseByCourseTypeId);
+    clearFilterIntFlag();
+    if (courses == NULL) {
+        puts("Ã»ÓĞ¿Î³ÌĞÅÏ¢");
+        return true;
+    }
+
+    // ²éÕÒÖ¸¶¨¿Î³ÌÀàĞÍµÄ¿Î³Ì
+    Course* currentCourse = courses;
+    int totalStudents = 0; // Ñ§Ô±×ÜÊı
+
+    while (currentCourse != NULL) {
+        int count = 0;
+
+        // ±éÀúÑ¡¿Î¹ØÏµ£¬Í³¼Æµ±Ç°¿Î³ÌµÄÑ§Ô±ÊıÁ¿
+        setFilterIntFlag(currentCourse->id);
+        UserCourseRel* userCourseRels = selectAllForUserCourseRel(filterCoachCourseRelByCourseId);
+        clearFilterIntFlag();
+        UserCourseRel* currentRel = userCourseRels;
+        while (currentRel != NULL) {
+            count++;
+            currentRel = currentRel->nextPointer;
+        }
+
+        // ´òÓ¡µ±Ç°¿Î³ÌµÄÑ§Ô±ÊıÁ¿
+        printf("¿Î³ÌID: %d\n", currentCourse->id);
+        printf("¿Î³ÌÃû³Æ: %s\n", currentCourse->name);
+        printf("Ñ§Ô±ÊıÁ¿: %d\n", count);
+        printf("--------------------------\n");
+
+        totalStudents += count; // ÀÛ¼Ó×ÜÑ§Ô±ÊıÁ¿
+
+        // ÊÍ·ÅÄÚ´æ
+        freeUserCourseRelList(userCourseRels);
+        currentCourse = currentCourse->nextPointer;
+    }
+
+    // ´òÓ¡¸ÃÀàĞÍ¿Î³ÌµÄ×ÜÑ§Ô±ÊıÁ¿
+    printf("¿Î³ÌÀàĞÍID: %d\n", courseTypeId);
+    printf("×ÜÑ§Ô±ÊıÁ¿: %d\n", totalStudents);
+    printf("--------------------------\n");
+
+    // ÊÍ·ÅÄÚ´æ
+    freeCourseList(courses);
+    return true;
+}
+
+/**
+ * ´òÓ¡ËùÓĞ½ÌÁ·¸ºÔğµÄ½¡Éí¿Î³ÌÃÅÊı
+ */
+bool countCoachCourseForAdmin() {
+    // »ñÈ¡ËùÓĞ½ÌÁ·
+    Coach* coaches = selectAllForCoach(NULL);
+    if (coaches == NULL) {
+        puts("Ã»ÓĞ½ÌÁ·ĞÅÏ¢");
+        return true;
+    }
+
+    // ±éÀú½ÌÁ·£¬Í³¼ÆÃ¿¸ö½ÌÁ·¸ºÔğµÄ¿Î³ÌÊıÁ¿
+    puts("½ÌÁ·¸ºÔğµÄ¿Î³ÌÊıÁ¿Í³¼Æ£º\n--------------------------");
+    Coach* header = coaches;
+    while (header != NULL) {
+        countCoachCourseByIdForAdmin(header->id);
+        header = header->nextPointer;
+    }
+
+    // ÊÍ·ÅÄÚ´æ
+    freeCoachList(coaches);
+    return true;
+}
+
+/**
+ * ´òÓ¡Ä³½ÌÁ·¸ºÔğµÄ½¡Éí¿Î³ÌÃÅÊı
+ * @param coachId ½ÌÁ·ID
+ */
+bool countCoachCourseByIdForAdmin(int coachId) {
+    // »ñÈ¡Ö¸¶¨½ÌÁ·
+    Coach* coach = selectByIdForCoach(coachId);
+    if (coach == NULL) {
+        printf("Î´ÕÒµ½IDÎª %d µÄ½ÌÁ·\n", coachId);
+        return false;
+    }
+
+    // »ñÈ¡ËùÓĞ½ÌÁ·¿Î³Ì¹ØÏµ
+    setFilterIntFlag(coachId);
+    CoachCourseRel* coachCourseRels = selectAllForCoachCourseRel(filterCoachCourseRelByCoachId);
+    clearFilterIntFlag();
+    if (coachCourseRels == NULL) {
+        puts("Ã»ÓĞ½ÌÁ·¿Î³Ì¹ØÏµ¼ÇÂ¼");
+        free(coach); // ÊÍ·Å½ÌÁ·ÄÚ´æ
+        return true;
+    }
+
+    int count = 0; // ¸ºÔğµÄ¿Î³ÌÊıÁ¿
+
+    // ±éÀú½ÌÁ·¿Î³Ì¹ØÏµ£¬Í³¼Æµ±Ç°½ÌÁ·¸ºÔğµÄ¿Î³ÌÊıÁ¿
+    CoachCourseRel* currentRel = coachCourseRels;
+    while (currentRel != NULL) {
+            count++;
+        currentRel = currentRel->nextPointer;
+    }
+
+    // ´òÓ¡µ±Ç°½ÌÁ·¸ºÔğµÄ¿Î³ÌÊıÁ¿
+    puts("½ÌÁ·¸ºÔğµÄ¿Î³ÌÊıÁ¿Í³¼Æ£º\n--------------------------");
+    printf("½ÌÁ·ID: %d\n", coach->id);
+    printf("½ÌÁ·ĞÕÃû: %s\n", coach->name);
+    printf("¸ºÔğ¿Î³ÌÊıÁ¿: %d\n", count);
+    printf("--------------------------\n");
+
+    // ÊÍ·ÅÄÚ´æ
+    free(coach);
+    freeCoachCourseRelList(coachCourseRels);
+    return true;
+}
+
+/**
+ * ´òÓ¡ËùÓĞÑ§Ô±²Î¼ÓµÄ½¡Éí¿Î³ÌµÄÃÅÊı
+ */
+bool countUserCourseForAdmin() {
+    // »ñÈ¡ËùÓĞÑ§Ô±
+    User* users = selectAllForUser(NULL);
+    if (users == NULL) {
+        puts("Ã»ÓĞÑ§Ô±ĞÅÏ¢");
+        return true;
+    }
+    User* header = users;
+    while (header != NULL) {
+        countUserCourseByIdForAdmin(header->id);
+        header = header->nextPointer;
+    }
+
+    // ÊÍ·ÅÄÚ´æ
+    freeUserList(users);
+    return true;
+}
+
+/**
+ * ´òÓ¡Ä³Ñ§Ô±²Î¼ÓµÄ½¡Éí¿Î³ÌµÄÃÅÊı
+ * @param userId Ñ§Ô±ID
+ */
+bool countUserCourseByIdForAdmin(int userId) {
+    // »ñÈ¡Ö¸¶¨Ñ§Ô±
+    User* user = selectByIdForUser(userId);
+    if (user == NULL) {
+        printf("Î´ÕÒµ½IDÎª %d µÄÑ§Ô±\n", userId);
+        return false;
+    }
+
+    // »ñÈ¡ËùÓĞÑ§Ô±¿Î³Ì¹ØÏµ
+    setFilterIntFlag(userId);
+    UserCourseRel* userCourseRels = selectAllForUserCourseRel(filterUserCourseRelByUserId);
+    clearFilterIntFlag();
+    if (userCourseRels == NULL) {
+        puts("Ã»ÓĞÑ§Ô±¿Î³Ì¹ØÏµ¼ÇÂ¼");
+        free(user); // ÊÍ·ÅÑ§Ô±ÄÚ´æ
+        return true;
+    }
+
+    int count = 0; // ²Î¼ÓµÄ¿Î³ÌÊıÁ¿
+
+    // ±éÀúÑ§Ô±¿Î³Ì¹ØÏµ£¬Í³¼Æµ±Ç°Ñ§Ô±²Î¼ÓµÄ¿Î³ÌÊıÁ¿
+    UserCourseRel* currentRel = userCourseRels;
+    while (currentRel != NULL) {
+        count++;
+        currentRel = currentRel->nextPointer;
+    }
+
+    // ´òÓ¡µ±Ç°Ñ§Ô±²Î¼ÓµÄ¿Î³ÌÊıÁ¿
+    puts("Ñ§Ô±²Î¼ÓµÄ¿Î³ÌÊıÁ¿Í³¼Æ£º\n--------------------------");
+    printf("Ñ§Ô±ID: %d\n", user->id);
+    printf("Ñ§Ô±ĞÕÃû: %s\n", user->name);
+    printf("²Î¼Ó¿Î³ÌÊıÁ¿: %d\n", count);
+    printf("--------------------------\n");
+
+    // ÊÍ·ÅÄÚ´æ
+    free(user);
+    freeUserCourseRelList(userCourseRels);
+    return true;
+}
+
+// ĞÅÏ¢Í³¼Æ
+
+// ÏµÍ³Î¬»¤
+
+/**
+ * ĞŞ¸Ä¹ÜÀíÔ±ÃÜÂë£¨IDÓÉµÇÂ¼º¯Êı¼ÇÂ¼£©
+ * @param newPassword ĞÂÃÜÂë
+ * @return ÊÇ·ñ³É¹¦
+ */
+bool changePasswordForAdmin(char* newPassword) {
+    // ¼ÙÉèµ±Ç°µÇÂ¼µÄ¹ÜÀíÔ±IDÒÑ¾­¼ÇÂ¼ÔÚÈ«¾Ö±äÁ¿ CURRENT_ADMIN_ID ÖĞ
+ 
+    // »ñÈ¡µ±Ç°¹ÜÀíÔ±ĞÅÏ¢
+    Admin* admin = selectByIdForAdmin(CURRENT_ADMIN_ID);
+    if (admin == NULL) {
+        puts("Î´ÕÒµ½µ±Ç°¹ÜÀíÔ±ĞÅÏ¢");
+        return false;
+    }
+
+    // ¸üĞÂÃÜÂë
+    char* encryptPassword = generateEncryptPassword(newPassword);
+    strcpy(admin->password, encryptPassword);
+    free(encryptPassword);
+
+    // ¸üĞÂÊı¾İ¿âÖĞµÄ¹ÜÀíÔ±ĞÅÏ¢
+    if (updateByIdForAdmin(admin, CURRENT_ADMIN_ID)) {
+        puts("ÃÜÂëĞŞ¸Ä³É¹¦");
+        // ÊÍ·ÅÄÚ´æ
+        free(admin);
+        return true;
+    }
+    else {
+        puts("ÃÜÂëĞŞ¸ÄÊ§°Ü");
+        // ÊÍ·ÅÄÚ´æ
+        free(admin);
+        return false;
+    }
+
+    
+}
+
+/**
+ * ĞŞ¸Ä½ÌÁ·ÃÜÂë
+ * @param coachId ½ÌÁ·ID
+ * @param newPassword ĞÂÃÜÂë
+ */
+bool changeCoachPasswordForAdmin(int coachId, char* newPassword) {
+    // »ñÈ¡Ö¸¶¨½ÌÁ·ĞÅÏ¢
+    Coach* coach = selectByIdForCoach(coachId);
+    if (coach == NULL) {
+        printf("Î´ÕÒµ½IDÎª %d µÄ½ÌÁ·\n", coachId);
+        return false;
+    }
+
+    // ¸üĞÂÃÜÂë
+    char* encryptPassword = generateEncryptPassword(newPassword);
+    strcpy(coach->password, encryptPassword);
+    free(encryptPassword);
+
+    // ¸üĞÂÊı¾İ¿âÖĞµÄ½ÌÁ·ĞÅÏ¢
+    if (updateByIdForCoach(coach, coachId)) {
+        puts("½ÌÁ·ÃÜÂëĞŞ¸Ä³É¹¦");
+        // ÊÍ·ÅÄÚ´æ
+        free(coach);
+        return true;
+    }
+    else {
+        puts("½ÌÁ·ÃÜÂëĞŞ¸ÄÊ§°Ü");
+        // ÊÍ·ÅÄÚ´æ
+        free(coach);
+        return false;
+    }
+
+    
+}
+
+/**
+ * Êı¾İ±¸·İ
+ * @param backupName ±¸·İÃû³Æ
+ */
+bool databaseBackup(char* backupName) {
+    // ´ò¿ªÔ­Ê¼Êı¾İÎÄ¼ş
+    FILE* sourceFile = fopen(DATAFILE_NAME, "rb");
+    if (sourceFile == NULL) {
+        printf("ÎŞ·¨´ò¿ªÔ­Ê¼Êı¾İÎÄ¼ş: %s\n", DATAFILE_NAME);
+        return false;
+    }
+
+    // ´´½¨±¸·İÎÄ¼ş
+    char backupFilePath[MAX_STR];
+    snprintf(backupFilePath, MAX_STR, "%s.bak", backupName); // ±¸·İÎÄ¼şÂ·¾¶
+    FILE* backupFile = fopen(backupFilePath, "wb");
+    if (backupFile == NULL) {
+        printf("ÎŞ·¨´´½¨±¸·İÎÄ¼ş: %s\n", backupFilePath);
+        fclose(sourceFile); // ¹Ø±ÕÔ­Ê¼ÎÄ¼ş
+        return false;
+    }
+
+    // ¸´ÖÆÊı¾İ
+    char buffer[1024];
+    size_t bytesRead;
+    while (bytesRead = fread(buffer, 1, sizeof(buffer), sourceFile)) {
+        fwrite(buffer, 1, bytesRead, backupFile);
+    }
+
+    // ¹Ø±ÕÎÄ¼ş
+    fclose(sourceFile);
+    fclose(backupFile);
+
+    printf("Êı¾İ±¸·İ³É¹¦£¬±¸·İÎÄ¼ş: %s\n", backupFilePath);
+    return true;
+}
+
+/**
+ * Êı¾İ»Ö¸´
+ * @param backupName ±¸·İÃû³Æ
+ */
+bool databaseRestore(char* backupName) {
+    // ¹¹½¨±¸·İÎÄ¼şÂ·¾¶
+    char backupFilePath[MAX_STR];
+    snprintf(backupFilePath, MAX_STR, "%s.bak", backupName); // ±¸·İÎÄ¼şÂ·¾¶
+
+    // ´ò¿ª±¸·İÎÄ¼ş
+    FILE* backupFile = fopen(backupFilePath, "rb");
+    if (backupFile == NULL) {
+        printf("ÎŞ·¨´ò¿ª±¸·İÎÄ¼ş: %s\n", backupFilePath);
+        return false;
+    }
+
+    // ´ò¿ªÔ­Ê¼Êı¾İÎÄ¼ş
+    FILE* sourceFile = fopen(DATAFILE_NAME, "wb");
+    if (sourceFile == NULL) {
+        printf("ÎŞ·¨´ò¿ªÔ­Ê¼Êı¾İÎÄ¼ş: %s\n", DATAFILE_NAME);
+        fclose(backupFile); // ¹Ø±Õ±¸·İÎÄ¼ş
+        return false;
+    }
+
+    // ¸´ÖÆÊı¾İ
+    char buffer[1024];
+    size_t bytesRead;
+    while (bytesRead = fread(buffer, 1, sizeof(buffer), backupFile)) {
+        fwrite(buffer, 1, bytesRead, sourceFile);
+    }
+
+    // ¹Ø±ÕÎÄ¼ş
+    fclose(backupFile);
+    fclose(sourceFile);
+
+    printf("Êı¾İ»Ö¸´³É¹¦£¬´Ó±¸·İÎÄ¼ş: %s\n", backupFilePath);
+    return true;
 }

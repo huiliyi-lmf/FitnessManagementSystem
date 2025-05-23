@@ -2,102 +2,131 @@
 #define __USER_H
 
 #include "structs.h"
-#include "filter.h"
+#include <stdbool.h>
+#include "admin.h"
 
-// å½“å‰ç”¨æˆ·ç™»å½•çš„ä¿¡æ¯
-extern int CURRENT_USER_ID;
-
-/**
- * æ ¹æ®æ‰‹æœºå·æŸ¥è¯¢å­¦å‘˜ä¿¡æ¯
- * @param phone æ‰‹æœºå·
- * @return è¿”å›æŸ¥æ‰¾åˆ°çš„å­¦å‘˜ä¿¡æ¯ï¼ˆUser*ï¼‰ï¼Œå¦‚æœä¸å­˜åœ¨åˆ™è¿”å› NULL
- */
-User* selectByPhoneForUser(char* phone);
+// ¸öÈËĞÅÏ¢¹ÜÀí
 
 /**
- * å­¦å‘˜æ³¨å†Œ
- * @param name å§“å
- * @param password å¯†ç 
- * @param phone ç”µè¯
- * @return æ˜¯å¦æˆåŠŸ
+ * Ñ§Ô±×¢²á
+ * @param name Ãû×Ö
+ * @param password ÃÜÂë
+ * @param phone µç»°
+ * @return ÊÇ·ñ³É¹¦
  */
 bool registerForUser(char* name, char* password, char* phone);
 
 /**
- * ç™»å½•
- * @param name å§“å
- * @param password å¯†ç 
- * @param phone ç”µè¯å·
- * @return æ˜¯å¦æˆåŠŸ
+ * µÇÂ¼
+ * @param name ĞÕÃû
+ * @param password ÃÜÂë
+ * @param phone µç»°ºÅ
+ * @return ÊÇ·ñ³É¹¦
  */
 bool loginForUser(char* name, char* password, char* phone);
 
 /**
- * ä¿®æ”¹ä¸ªäººä¿¡æ¯
- * @param name å§“å
- * @param phone ç”µè¯
- * @return æ˜¯å¦æˆåŠŸ
+ * ĞŞ¸ÄĞÅÏ¢£¨ÎªNULLÔò²»ĞŞ¸Ä£©
+ * @param name ĞÕÃû
+ * @param phone µç»°
  */
 bool changeInfoForUser(char* name, char* phone);
 
-/**
- * ä¿®æ”¹å¯†ç 
- * @param oldPassword æ—§å¯†ç 
- * @param newPassword æ–°å¯†ç 
- * @return æ˜¯å¦æˆåŠŸ
- */
-bool changePasswordForUser(char* oldPassword, char* newPassword);
+// ¸öÈËĞÅÏ¢¹ÜÀí
+
+// ¿Î³Ì±¨Ãû¹ÜÀí
 
 /**
- * æ·»åŠ ç”¨æˆ·è¯¾ç¨‹å…³ç³»
- * @param courseId è¯¾ç¨‹ID
- * @return æ˜¯å¦æˆåŠŸ
+ * Ìí¼Ó×Ô¼ºËùÉÏµÄ¿Î³Ì
+ * @param courseId ¿Î³ÌID
  */
 bool addUserCourseRel(int courseId);
 
 /**
- * åˆ é™¤ç”¨æˆ·è¯¾ç¨‹å…³ç³»
- * @param id å…³ç³»ID
- * @return æ˜¯å¦æˆåŠŸ
+ * É¾³ı×Ô¼ºËùÉÏµÄ¿Î³Ì
+ * @param courseId ¿Î³ÌID
  */
-bool deleteUserCourseRel(int id);
+bool deleteUserCourseRel(int courseId);
+
+// ¿Î³Ì±¨Ãû¹ÜÀí
+
+// ĞÅÏ¢²éÑ¯
 
 /**
- * æ˜¾ç¤ºæ‰€æœ‰è¯¾ç¨‹
+ * ´òÓ¡µ±Ç°ÓÃ»§ËùÓĞ¿Î³ÌĞÅÏ¢
  */
-void showAllCourseForUser();
+bool showCourseInfoForUser();
 
 /**
- * æœç´¢è¯¾ç¨‹
- * @param name è¯¾ç¨‹åç§°
+ * ²éÑ¯µ±Ç°ÓÃ»§¿Î³ÌĞÅÏ¢£¨null»òÕß-1µÄÏîÄ¿ÔòËµÃ÷²»Ê¹ÓÃÕâ¸öÌõ¼ş£©
+ * @param courseName ¿Î³ÌÃû³Æ
+ * @param courseType ¿Î³ÌÀàĞÍ
+ * @param location ¿Î³ÌµØµã
+ * @param stuMax_low ×î´óÑ§Éú£¨×óÇø¼ä£©
+ * @param stuMax_high ×î´óÑ§Éú£¨ÓÒÇø¼ä£©
+ * @param price_low ¼Û¸ñ£¨×óÇø¼ä£©
+ * @param price_high ¼Û¸ñ£¨ÓÒÇø¼ä£©
+ * @param time_low Ê±¼ä£¨×óÇø¼ä£©
+ * @param time_high Ê±¼ä£¨ÓÒÇø¼ä£©
  */
-void searchCourseForUser(char* name);
+bool searchCourseInfoForUser(char* courseName, char* courseType, char* location, int stuMax_low, int stuMax_high, double price_low, double price_high, int time_low, int time_high);
+
+// ĞÅÏ¢²éÑ¯
+
+// ĞÅÏ¢ÅÅĞò
 
 /**
- * æŒ‰ç…§ä»·æ ¼æ’åºè¯¾ç¨‹
+ * ¶Ôµ±Ç°ÓÃ»§¿Î³ÌĞÅÏ¢½øĞĞÅÅĞò
+ * Ã¿¸ö¹Ø¼ü×ÖµÄÖµÎªÕıÊıÊ±ÔòËµÃ÷ÎªÉıĞòÅÅĞò£¬Îª¸ºÊıÊ±ÔòÎª½µĞòÅÅĞò
+ * Èç¹û¹Ø¼ü×ÖµÄÖµÎª0Ôò²»²ÎÓëÅÅĞò£¬¹Ø¼ü×ÖµÄ¾ø¶ÔÖµÔ½Ğ¡£¬ÔòËµÃ÷ÓÅÏÈ¶ÈÔ½¸ß
+ * Á½¸öÖµ·ÇÁãµÄ¹Ø¼ü×ÖµÄ¾ø¶ÔÖµ²»Ó¦¸ÃÏàÍ¬
+ * @param byName   °´Ãû³Æ
+ * @param byTypeId °´ÀàĞÍID
+ * @param byTime °´Ê±¼ä
+ * @param byLocation °´µØµã
+ * @param byStuCount °´ËùÑ¡Ñ§ÉúÊıÁ¿
+ * @param byStuMax °´×î´óÑ§ÉúÊıÁ¿
+ * @param byCoachNum °´½ÌÁ·ÊıÁ¿
+ * @param byPrice °´¼Û¸ñ
  */
-void sortCourseByPriceForUser();
+bool sortCourseInfoForUser(int byName, int byTypeId, int byTime, int byLocation, int byStuCount, int byStuMax, int byCoachNum, int byPrice);
+
+// ĞÅÏ¢ÅÅĞò
+
+// ĞÅÏ¢Í³¼Æ
 
 /**
- * ç»Ÿè®¡è¯¾ç¨‹ç±»å‹æ•°é‡
+ * ´òÓ¡µ±Ç°ÓÃ»§ËùÓĞÀàĞÍ¿Î³ÌµÄÑ§Ô±ÊıÁ¿
  */
-void countCourseTypeForUser();
+bool countCourseTypeSelectedForUser();
 
 /**
- * ç»Ÿè®¡æŒ‡å®šè¯¾ç¨‹ç±»å‹çš„è¯¾ç¨‹æ•°é‡
- * @param typeId è¯¾ç¨‹ç±»å‹ID
+ * ´òÓ¡µ±Ç°ÓÃ»§Ä³¸öÀàĞÍ¿Î³ÌµÄÑ§Ô±ÊıÁ¿
+ * @param courseTypeId ¿Î³ÌÀàĞÍID
  */
-void countCourseTypeByIdForUser(int typeId);
+bool countCourseTypeSelectedByIdForUser(int courseTypeId);
 
 /**
- * ç»Ÿè®¡æ•™ç»ƒæ•°é‡
+ * ´òÓ¡ËùÓĞ½ÌÁ·¸ºÔğµ±Ç°ÓÃ»§µÄ½¡Éí¿Î³ÌÃÅÊı
  */
-void countCoachForUser();
+bool countCoachCourseForUser();
 
 /**
- * ç»Ÿè®¡æŒ‡å®šæ•™ç»ƒçš„è¯¾ç¨‹æ•°é‡
- * @param coachId æ•™ç»ƒID
+ * ´òÓ¡Ä³½ÌÁ·¸ºÔğµÄµ±Ç°ÓÃ»§½¡Éí¿Î³ÌÃÅÊı
+ * @param coachId ½ÌÁ·ID
  */
-void countCoachByIdForUser(int coachId);
+bool countCoachCourseByIdForUser(int coachId);
 
-#endif // !__USER_H
+// ĞÅÏ¢Í³¼Æ
+
+// ÏµÍ³Î¬»¤
+
+/**
+ * ĞŞ¸ÄÓÃ»§ÃÜÂë
+ * @param newPassword ĞÂÃÜÂë
+ */
+bool changePasswordForUser(char* newPassword);
+
+// ÏµÍ³Î¬»¤
+
+#endif

@@ -1,33 +1,47 @@
 #ifndef __FILTER_H
 #define __FILTER_H
 
-#include <stdbool.h>
+#include "structs.h"
+#include <malloc.h>
 
-// ËøáÊª§Âô®Ê†áÂøó‰Ωç
-extern char* FILTER_STR_FLAG;
-extern int FILTER_INT_FLAG;
+// ¥À¥¶∂®“ÂÀ˘”–Ãıº˛≤È—Ø π”√µƒfilter
 
-// ËÆæÁΩÆËøáÊª§Âô®Ê†áÂøó‰Ωç
-void setFilterStrFlag(char* str);
-void setFilterIntFlag(int i);
-
-// Ê∏ÖÈô§ËøáÊª§Âô®Ê†áÂøó‰Ωç
-void clearFilterStrFlag();
+void setFilterIntFlag(int val);
 void clearFilterIntFlag();
+void setFilterStrFlag(char* val);
+void clearFilterStrFlag();
 
-// ËøáÊª§Âô®ÂáΩÊï∞
-void* filterAdminByUsername(void* data);
-void* filterCoachByName(void* data);
-void* filterCoachByExpertiseStatus(void* data);
-void* filterCourseTypeByName(void* data);
-void* filterCoachTypeRelByCoachId(void* data);
-void* filterCoachTypeRelByTypeId(void* data);
-void* filterUserByPhone(void* data);
-void* filterCourseByName(void* data);
-void* filterCourseByTypeId(void* data);
-void* filterCoachCourseRelByCoachId(void* data);
-void* filterCoachCourseRelByCourseId(void* data);
-void* filterUserCourseRelByUserId(void* data);
-void* filterUserCourseRelByCourseId(void* data);
+#define GENERATE_FILTER_DECLARATION(structName, byWhat) \
+void* filter##structName##By##byWhat##(void* header)
+
+// ∏˘æ›CourseTypeId…∏—°Course¡¥±Ì
+GENERATE_FILTER_DECLARATION(Course, CourseTypeId);
+
+// ∏˘æ›CourseTypeId…∏—°CoachTypeRel¡¥±Ì
+GENERATE_FILTER_DECLARATION(CoachTypeRel, CourseTypeId);
+
+GENERATE_FILTER_DECLARATION(Admin, Username);
+
+GENERATE_FILTER_DECLARATION(CourseType, Name);
+
+GENERATE_FILTER_DECLARATION(Coach, Name);
+
+GENERATE_FILTER_DECLARATION(CoachCourseRel, CoachId);
+
+GENERATE_FILTER_DECLARATION(CoachCourseRel, CourseId);
+
+GENERATE_FILTER_DECLARATION(CoachTypeRel, CoachId);
+
+GENERATE_FILTER_DECLARATION(Coach, ExpertiseStatus);
+
+GENERATE_FILTER_DECLARATION(User, NameContains);
+
+GENERATE_FILTER_DECLARATION(UserCourseRel, UserId);
+
+GENERATE_FILTER_DECLARATION(UserCourseRel, CourseId);
+
+GENERATE_FILTER_DECLARATION(CourseType, NameContains);
+
+GENERATE_FILTER_DECLARATION(User, Phone);
 
 #endif // !__FILTER_H

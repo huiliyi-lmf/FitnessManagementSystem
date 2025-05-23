@@ -24,12 +24,12 @@ void clearFilterStrFlag() {
 #define STR_CONTAIN_MACRO(s1, s2) (strstr(s1, s2) != NULL)
 
 /**
-* ç”Ÿæˆè¿‡æ»¤å™¨å‡½æ•°çš„å®šä¹‰
-* @param structName ç»“æ„ä½“åç§°
-* @param byWhat æŒ‰ç…§ä»€ä¹ˆæ¥è¿‡æ»¤
-* @param whichProperty åœ¨ç»“æ„ä½“ä¸­çš„è¿‡æ»¤å±æ€§æ˜¯ä»€ä¹ˆ
-* @param whichExternFlag å“ªä¸ªexternå˜é‡å­˜å‚¨æ¯”è¾ƒå€¼
-* @param equalMacro æ¯”è¾ƒå®ï¼Œå®šä¹‰ä¸¤å€¼ç›¸ç­‰å…³ç³»æ˜¯ä»€ä¹ˆ
+* ¶¨Òå¹ıÂËÆ÷º¯ÊıµÄ¶¨Òåºê
+* @param structName ½á¹¹ÌåÃû×Ö
+* @param byWhat ¸ù¾İÊ²Ã´¼ü¹ıÂË
+* @param whichProperty ÔÚ½á¹¹ÌåÖĞµÄÊôĞÔÃûÊÇÊ²Ã´
+* @param whichExternFlag ÄÄ¸öextern±äÁ¿´æ´¢´ı±È½ÏÖµ
+* @param equalMacro ÏàµÈºê£¬ÕâÁ½¸öÖµµÄÏàµÈ¹ØÏµÊÇÊ²Ã´
 */
 #define GENERATE_FILTER_DEFINITION(structName, byWhat, whichProperty, whichExternFlag, equalMacro) \
 void* filter##structName##By##byWhat##(void* header) {  \
@@ -68,19 +68,19 @@ void* filter##structName##By##byWhat##(void* header) {  \
 }
 
 /**
-* ç”Ÿæˆæ•´æ•°è¿‡æ»¤å™¨å‡½æ•°çš„å®šä¹‰
-* @param structName ç»“æ„ä½“åç§°
-* @param byWhat æŒ‰ç…§ä»€ä¹ˆæ¥è¿‡æ»¤
-* @param whichProperty åœ¨ç»“æ„ä½“ä¸­çš„è¿‡æ»¤å±æ€§æ˜¯ä»€ä¹ˆ
+* ¶¨ÒåÕûÊı¹ıÂËÆ÷º¯ÊıµÄ¶¨Òåºê
+* @param structName ½á¹¹ÌåÃû×Ö
+* @param byWhat ¸ù¾İÊ²Ã´¼ü¹ıÂË
+* @param whichProperty ÔÚ½á¹¹ÌåÖĞµÄÊôĞÔÃûÊÇÊ²Ã´
 */
 #define GENERATE_INT_FILTER_DEFINITION(structName, byWhat, whichProperty) \
 GENERATE_FILTER_DEFINITION(structName, byWhat, whichProperty, CURRENT_INT_VAL_FILTER_FLAG, BASE_EQUAL_MACRO)
 
 /**
-* ç”Ÿæˆå­—ç¬¦ä¸²è¿‡æ»¤å™¨å‡½æ•°çš„å®šä¹‰
-* @param structName ç»“æ„ä½“åç§°
-* @param byWhat æŒ‰ç…§ä»€ä¹ˆæ¥è¿‡æ»¤
-* @param whichProperty åœ¨ç»“æ„ä½“ä¸­çš„è¿‡æ»¤å±æ€§æ˜¯ä»€ä¹ˆ
+* ¶¨Òå×Ö·û´®¹ıÂËÆ÷º¯ÊıµÄ¶¨Òåºê
+* @param structName ½á¹¹ÌåÃû×Ö
+* @param byWhat ¸ù¾İÊ²Ã´¼ü¹ıÂË
+* @param whichProperty ÔÚ½á¹¹ÌåÖĞµÄÊôĞÔÃûÊÇÊ²Ã´
 */
 #define GENERATE_STR_FILTER_DEFINITION(structName, byWhat, whichProperty) \
 GENERATE_FILTER_DEFINITION(structName, byWhat, whichProperty, CURRENT_STR_VAL_FILTER_FLAG, STR_EQUAL_MACRO)
@@ -88,10 +88,10 @@ GENERATE_FILTER_DEFINITION(structName, byWhat, whichProperty, CURRENT_STR_VAL_FI
 #define GENERATE_SUBSTR_FILTER_DEFINITION(structName, byWhat, whichProperty) \
 GENERATE_FILTER_DEFINITION(structName, byWhat, whichProperty, CURRENT_STR_VAL_FILTER_FLAG, STR_CONTAIN_MACRO)
 
-// æŒ‰ç…§CourseTypeIdç­›é€‰Courseé“¾è¡¨
+// ¸ù¾İCourseTypeIdÉ¸Ñ¡CourseÁ´±í
 GENERATE_INT_FILTER_DEFINITION(Course, CourseTypeId, type_id);
 
-// æŒ‰ç…§CourseTypeIdç­›é€‰CoachTypeRelé“¾è¡¨
+// ¸ù¾İCourseTypeIdÉ¸Ñ¡CoachTypeRelÁ´±í
 GENERATE_INT_FILTER_DEFINITION(CoachTypeRel, CourseTypeId, type_id);
 
 GENERATE_STR_FILTER_DEFINITION(Admin, Username, username);
